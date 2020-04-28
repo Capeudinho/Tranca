@@ -1,6 +1,9 @@
-import React from 'react';
+import React from "react";
+import api from "./services/api";
 import "./global.css";
 import "./App.css"
+
+import UserAdd from "./components/UserAdd";
 
 function App() {
   return (
@@ -59,8 +62,7 @@ function App() {
         </div>
 
         <div className = "section sectionCenter">
-          <button className = "item itemCenter">Lab 12</button>
-          <button className = "item itemCenter">Lab 13</button>
+          <UserAdd></UserAdd>
         </div>
 
         <div className = "section sectionRight">
