@@ -1,36 +1,25 @@
-const User = require ("../models/User");
+const UserService = require ("../services/UserService");
+
 
 module.exports =
 {
     async list (request, response)
     {
-       const users = await User.find ();
-       return response.json (users);
+        UserService.list (request, response);
     },
-    
+
     async index (request, response)
     {
-       const user = await User.find ();
-       return response.json (user);
+        UserService.index (request, response);
     },
 
     async store (request, response)
     {
-        const {name} = request.body;
-
-        const user = await User.findOne ({name});
-        if (user === null)
-        {
-            var newUser = await User.create ({name});
-        }
-
-        return response.json (newUser);
+        UserService.store (request, response);
     },
 
     async destroy (request, response)
     {
-        const {name} = request.query;
-        const user = await User.deleteMany (User.find ({name}));
-        return response.json (user);
+        UserService.destroy (request, response);
     }
 };

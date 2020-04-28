@@ -1,6 +1,6 @@
 const mongoose = require ("mongoose");
 
-const LockSchema = new mongoose.Schema
+const GroupSchema = new mongoose.Schema
 (
     {
         name: String,
@@ -8,4 +8,4 @@ const LockSchema = new mongoose.Schema
     }
 );
 
-module.exports = mongoose.model ("Lock", LockSchema);
+module.exports = mongoose.model ("Group", GroupSchema);

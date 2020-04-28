@@ -11,7 +11,7 @@ routes.post ("/centrals", CentralController.store);
 routes.delete ("/centrals", CentralController.destroy);
 
 routes.get ("/users", UserController.list);
-routes.get ("/users", UserController.index);
+routes.get ("/searchuser", UserController.index);
 routes.post ("/users", UserController.store);
 routes.delete ("/users", UserController.destroy);
 

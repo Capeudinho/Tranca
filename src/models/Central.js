@@ -3,7 +3,10 @@ const mongoose = require ("mongoose");
 const CentralSchema = new mongoose.Schema
 (
     {
-        name: String
+        name: String,
+        email: String,
+        password: String,
+        roles: [String]
     }
 );
 
