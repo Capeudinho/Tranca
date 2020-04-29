@@ -1,6 +1,5 @@
 const UserService = require ("../services/UserService");
 
-
 module.exports =
 {
     async list (request, response)

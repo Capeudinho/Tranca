@@ -10,28 +10,26 @@ module.exports =
     
     async index (request, response)
     {
-        const {nome} = request.query;
-        const user = await User.findOne ({nome});
+        const {_id} = request.query;
+        const user = await User.findById ({_id});
         return response.json (user);
     },
 
     async store (request, response)
     {
-        const {name, MACs} = request.body;
-
+        const {name, email, MACs} = request.body;
         const user = await User.findOne ({name});
         if (user === null)
         {
-            var newUser = await User.create ({name, MACs});
+            var newUser = await User.create ({name, email, MACs});
         }
-
         return response.json (newUser);
     },
 
     async destroy (request, response)
     {
-        const {nome} = request.query;
-        const user = await User.findOneAndDelete({nome});
+        const {_id} = request.query;
+        const user = await User.findByIdAndDelete({_id});
         return response.json (user);
     }
 };
