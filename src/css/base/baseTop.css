@@ -1,0 +1,26 @@
+.header
+{
+    display: grid;
+    grid-template-columns: 1fr 0fr 0fr;
+    height: 50px;
+    padding: 10px;
+    background-image: linear-gradient(to right, #19b2ff , #d47fff);
+}
+
+.profileName, .search, .menu
+{
+
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.search, .menu
+{
+    border: 0;
+    padding: 0;
+    background: none;
+    margin-left: 20px;
+    cursor: pointer;
+}

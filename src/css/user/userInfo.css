@@ -1,0 +1,56 @@
+.userInfoArea .name
+{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.userInfoArea .email
+{
+    font-size: 18px;
+    font-weight: bold;
+    color: #cccccc;
+    margin-bottom: 10px;
+}
+
+.userInfoArea button
+{
+    height: 30px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.userInfoArea .buttonDelete
+{
+    color: #cc5151;
+    border-color: #cc5151;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.userInfoArea .buttonEdit
+{
+    color: #cccccc;
+    border-color: #cccccc;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.userInfoArea .buttonDelete:hover
+{
+    color: #ffffff;
+    background-color: #cc5151;
+}
+
+.userInfoArea .buttonEdit:hover
+{
+    color: #ffffff;
+    background-color: #cccccc;
+}

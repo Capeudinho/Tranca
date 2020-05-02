@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
+import "../../css/base/baseRight.css";
+
 function BaseRight ()
 {
     return (
-        <>
-            <h1>Direita</h1>
-        </>
+        <div className = "baseRightArea">
+        </div>
     )
 }
 

@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 
+import "../../css/base/baseCenter.css";
+
 function BaseCenter ()
 {
     return (
-        <>
-            <h1>Centro</h1>
-        </>
+        <div className = "baseCenterArea">
+        </div>
     )
 }
 

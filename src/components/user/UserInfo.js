@@ -1,18 +1,22 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import deletedUserContext from "../context/deletedUserContext";
+
+import "../../css/user/userInfo.css";
+
 function UserInfo ({match})
 {
+    const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const [user, setUser] = useState ({});
     const [_id, set_id] = useState ("");
+
 
     useEffect
     (
         () =>
         {
-            let cancel = false;
-            
             if (user.hasOwnProperty ("_id") === false)
             {
                 set_id (match.params.id);
@@ -28,7 +32,7 @@ function UserInfo ({match})
             {
                 const response = await api.get
                 (
-                    "/searchuser",
+                    "/useridindex",
                     {
                         params:
                         {
@@ -36,7 +40,6 @@ function UserInfo ({match})
                         }
                     }
                 )
-                if (cancel) {return;}
                 if (user.hasOwnProperty ("name") === false)
                 {
                     setUser (response.data);
@@ -50,31 +53,43 @@ function UserInfo ({match})
                 }
             }
             runEffect();
-            return () => {cancel = true;}
         }
     );
 
     async function handleDeleteUser (_id)
     {
         if (window.confirm(`Você realmente deseja remover o usuário ${user.name}?`))
-        {const response = await api.delete
+        {
+            const response = await api.delete
             (
-                "/users",
+                "/useriddestroy",
                 {
                     params:
                         {
                             _id
                         }
                 }
-            );}
+            );
+            if (response.data._id === _id)
+            {
+                window.alert(`O usuário ${user.name} foi excluído.`);
+                setDeletedUser (user);
+            }
+        }
     }
 
     return (
-        <div>
-            <h1>{user.name}</h1>
-            <div>{user.email}</div>
-            <Link to = "/listusers">
-                <button onClick = {() => handleDeleteUser (user._id)}>Deletar</button>
+        <div className = "userInfoArea">
+            <div className = "name">{user.name}</div>
+            <div className = "email">{user.email}</div>
+            <button className = "buttonEdit">Editar</button>
+            <Link to = {match.url.replace (user._id, "")}>
+                <button
+                className = "buttonDelete"
+                onClick = {() => handleDeleteUser (user._id)}
+                >
+                    Excluir
+                </button>
             </Link>
         </div>
     )

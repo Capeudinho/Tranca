@@ -1,0 +1,25 @@
+#app
+{
+    height: 100%;
+}
+
+.Main
+{
+    display: grid;
+    grid-template-columns: 1fr 4fr 2fr;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.sectionMain
+{
+    padding: 10px;
+}
+
+.sectionCenter
+{
+    border-left: solid;
+    border-right: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}

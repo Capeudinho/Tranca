@@ -1,0 +1,45 @@
+.userListArea
+{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.userListArea button
+{
+    height: 30px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    cursor: pointer;
+    border-color: #cccccc;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.userListArea .buttonLoadMore
+{
+    color: #51a3cc;
+    border-color: #51a3cc;
+    text-align: center;
+}
+
+.userListArea button:hover
+{
+    background-color: #cccccc;
+}
+
+.userListArea .buttonLoadMore:hover
+{
+    color: #ffffff;
+    background-color: #51a3cc;
+}
+
+.userListArea .user
+{
+    margin-bottom: 10px;
+}

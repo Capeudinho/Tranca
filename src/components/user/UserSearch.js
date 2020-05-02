@@ -1,17 +1,26 @@
 import React, {useState, useEffect, useContext} from "react";
-import api from "../../services/api";
 import {Link} from "react-router-dom";
+import api from "../../services/api";
 
 import deletedUserContext from "../context/deletedUserContext";
 
-import "../../css/user/userList.css";
+import "../../css/user/userSearch.css";
 
-function UserList ()
+function UserSearch ({match})
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const [users, setUsers] = useState ([]);
+    const [value, setValue] = useState ("");
     const [page, setPage] = useState (1);
-    const [pageLimit, setPageLimit] = useState (1);
+
+    useEffect
+    (
+        () =>
+        {
+            setValue (match);
+        },
+        [match]
+    );
 
     useEffect
     (
@@ -45,29 +54,29 @@ function UserList ()
     (
         () =>
         {
-            try
+            const runEffect = async () =>
             {
-                const runEffect = async () =>
-                {
-                    const response = await api.get
-                    (
-                        `/userlistpag?page=${page}`
-                    );
-                    setPageLimit (response.data.pages);
-                    setUsers ([...users, ...response.data.docs]);
-                }
-                runEffect();
+                const name = match.params.name;
+                const response = await api.get
+                (
+                    `/usernamelistpag?page=${page}`,
+                    {
+                        params:
+                        {
+                            name
+                        }
+                    }
+                );
+                setUsers ([...users, ...response.data.docs]);
             }
-            catch (error)
-            {
-                console.log (error);
-            }
+            runEffect();
+            
         },
         [page]
-    );
+    )
 
     return (
-        <div className = "userListArea">
+        <div className = "userSearchArea">
             {
                 users.map
                 (
@@ -75,7 +84,7 @@ function UserList ()
                     {
                         return (
                             <div key = {index} className = "user">
-                                <Link key = {index} to = {`/listusers/${user._id}`}>
+                                <Link key = {index} to = {`/searchusers/${match.params.name}/${user._id}`}>
                                     <button
                                     className = "buttonUser"
                                     key = {index}>
@@ -89,11 +98,11 @@ function UserList ()
             }
             <button
             className = "buttonLoadMore"
-            onClick = {() => {if (page < pageLimit) {setPage (page+1)}}}>
+            onClick = {() => setPage (page+1)}>
                 Carregar mais
             </button>
         </div>
     )
 }
 
-export default UserList;
+export default UserSearch;

@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import api from "../../services/api";
 
+import "../../css/user/userAdd.css";
+
 function UserAdd ()
 {
     const [name, setName] = useState ("");
@@ -47,7 +49,7 @@ function UserAdd ()
             e.preventDefault ();
             const response = await api.post
             (
-                "/users",
+                "/userstore",
                 {
                     name,
                     email,
@@ -56,11 +58,11 @@ function UserAdd ()
             );
             if (response.data === "")
             {
-                window.alert("Já existe um usuário com esse nome")
+                window.alert("Já existe um usuário com esse nome.")
             }
             else
             {
-                window.alert(`Usuário ${name} foi criado.`)
+                window.alert(`O usuário ${name} foi criado.`)
                 document.getElementById ("userAdd").reset();
             }
         }
@@ -71,70 +73,77 @@ function UserAdd ()
     }
 
     return (
-        <form id = "userAdd">
-            <div className = "inputBlockName">
-                <label htmlFor = "name">Nome</label>
-                <input
-                    form = "userAdd"
-                    placeholder = "Nome"
-                    className = "nameInput"
-                    value = {name}
-                    onChange = {(e) => handleChangeName (e)}
-                    pattern = "[A-Za-z0-9_]{3,} "
-                    required
-                />
-                <label htmlFor = "name">E-mail</label>
-                <input
-                    form = "userAdd"
-                    placeholder = "E-mail"
-                    className = "emailInput"
-                    value = {email}
-                    onChange = {(e) => handleChangeEmail (e)}
-                    type = "email"
-                    required
-                />
-            </div>
-            {
-                MACs.map
-                (
-                    (MAC, index) =>
-                    {
-                        return (
-                            <div key = {index}>
-                                <input
-                                    form = "userAdd"
-                                    className = "MACInput"
-                                    value = {MAC}
-                                    placeholder = "MAC"
-                                    onChange = {(e) => handleChangeMAC (index, e)}
-                                />
-                                <button
-                                className = "MACRemove"
-                                type = "button"
-                                onClick = {() => handleRemoveMAC (index)}
-                                >
-                                    Remover
-                                </button>
-                            </div>
-                        );
-                    }
-                )
-            }
-            <button
-            className = "MACAdd"
-            type = "button"
-            onClick = {() => {handleAddMAC ()}}
-            >
-                Adicionar MAC
-            </button>
-            <button
-            className = "formSubmit"
-            type = "submit"
-            onClick = {(e) => {handleSubmit (e)}}
-            >
-                Salvar
-            </button>
-        </form>
+        <div className = "userAddArea">
+            <form id = "userAdd">
+                <div className = "nameInputGroup">
+                    <label htmlFor = "name">Nome</label>
+                    <input
+                        form = "userAdd"
+                        placeholder = "Nome"
+                        className = "nameInput"
+                        value = {name}
+                        onChange = {(e) => handleChangeName (e)}
+                        pattern = "[A-Za-z0-9_]{3,} "
+                        required
+                    />
+                </div>
+                <div className = "emailInputGroup">
+                    <label htmlFor = "email">E-mail</label>
+                    <input
+                        form = "userAdd"
+                        placeholder = "E-mail"
+                        className = "emailInput"
+                        value = {email}
+                        onChange = {(e) => handleChangeEmail (e)}
+                        type = "email"
+                        required
+                   />
+                </div>
+                {
+                    MACs.map
+                    (
+                        (MAC, index) =>
+                        {
+                            return (
+                                <div className = "singleMAC" key = {index}>
+                                    <label htmlFor = "MAC">MAC {index+1}</label>
+                                    <input
+                                        form = "userAdd"
+                                        className = "MACInput"
+                                        value = {MAC}
+                                        placeholder = "MAC"
+                                        onChange = {(e) => handleChangeMAC (index, e)}
+                                    />
+                                    <button
+                                    className = "buttonMACRemove"
+                                    type = "button"
+                                    onClick = {() => handleRemoveMAC (index)}
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            );
+                        }
+                    )
+                }
+                <div className = "buttonsMain">
+                    <button
+                    className = "buttonMACAdd"
+                    type = "button"
+                    onClick = {() => handleAddMAC ()}
+                    >
+                        Adicionar MAC
+                    </button>
+                    <button
+                    className = "buttonSubmit"
+                    type = "submit"
+                    onClick = {(e) => handleSubmit (e)}
+                    >
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
     )
 }
 

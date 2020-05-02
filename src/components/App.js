@@ -1,7 +1,9 @@
-import React from "react";
-import api from "../services/api";
-import {BrowserRouter, Switch, Route} from "react-router-dom";
+import React, {useState} from "react";
+import {BrowserRouter, Route} from "react-router-dom";
+import deletedUserContext from "./context/deletedUserContext";
+
 import "../global.css";
+import "../css/app.css";
 
 import BaseTop from "./base/BaseTop";
 import BaseLeft from "./base/BaseLeft";
@@ -11,26 +13,43 @@ import BaseRight from "./base/BaseRight";
 import UserAdd from "./user/UserAdd";
 import UserList from "./user/UserList";
 import UserInfo from "./user/UserInfo";
+import UserSearchBar from "./user/UserSearchBar";
+import UserSearch from "./user/UserSearch";
 
-function App() {
+function App()
+{
+  const [deletedUser, setDeletedUser] = useState ([]);
+
   return (
     <BrowserRouter>
       <div id = "app">
         <div className = "section sectionTop">
-          <BaseTop/>
+          <Route path = "/" component = {BaseTop}/>
         </div>
-        <div className = "section sectionLeft">
-          <BaseLeft/>
+
+        <div className = "Main">
+          <div className = "section sectionMain sectionLeft">
+          <Route path = "/" component = {BaseLeft}/>
+          </div>
+
+          <deletedUserContext.Provider value = {{deletedUser, setDeletedUser}}>
+            <div className = "section sectionMain sectionCenter">
+              <Route path = "/" exact component = {BaseCenter}/>
+              <Route path = "/listusers" component = {UserSearchBar}/>
+              <Route path = "/searchusers" component = {UserSearchBar}/>
+              <Route path = "/listusers" component = {UserList}/>
+              <Route path = "/searchusers/:name" component = {UserSearch}/>
+            </div>
+
+            <div className = "section sectionMain sectionRight">
+              <Route path = "/" exact component = {BaseRight}/>
+              <Route path = "/adduser" component = {UserAdd}/>
+              <Route path = "/listusers/:id" component = {UserInfo}/>
+              <Route path = "/searchusers/:name/:id" component = {UserInfo}/>
+            </div>
+          </deletedUserContext.Provider>
         </div>
-        <div className = "section sectionCenter">
-          <Route path = "/" exact component = {BaseCenter}/>
-          <Route path = "/adduser" component = {UserAdd}/>
-          <Route path = "/listusers" component = {UserList}/>
-        </div>
-        <div className = "section sectionRight">
-          <Route path = "/" exact component = {BaseRight}/>
-          <Route path = "/listusers/:id" component = {UserInfo}/>
-        </div>
+        
       </div>
     </BrowserRouter>
   );
