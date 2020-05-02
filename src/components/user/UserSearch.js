@@ -10,25 +10,37 @@ function UserSearch ({match})
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const [users, setUsers] = useState ([]);
-    const [value, setValue] = useState ("");
+    const [name, setName] = useState ("");
     const [page, setPage] = useState (1);
+    const [pageLimit, setPageLimit] = useState (1);
+    const [update, setUpdate] = useState (false);
 
     useEffect
     (
         () =>
         {
-            setValue (match);
+            if (match.params.name !== name)
+            {
+                setName (match.params.name);
+                setUsers ([]);
+                if (page === 1)
+                {
+                    if (update === false)
+                    {
+                        setUpdate (true);
+                    }
+                    else
+                    {
+                        setUpdate (false)
+                    }
+                }
+                else
+                {
+                    setPage (1);
+                }
+            }
         },
         [match]
-    );
-
-    useEffect
-    (
-        () =>
-        {
-            setPage (page);
-        },
-        []
     );
 
     useEffect
@@ -56,7 +68,6 @@ function UserSearch ({match})
         {
             const runEffect = async () =>
             {
-                const name = match.params.name;
                 const response = await api.get
                 (
                     `/usernamelistpag?page=${page}`,
@@ -67,12 +78,12 @@ function UserSearch ({match})
                         }
                     }
                 );
+                setPageLimit (response.data.pages);
                 setUsers ([...users, ...response.data.docs]);
             }
             runEffect();
-            
         },
-        [page]
+        [page, update]
     )
 
     return (
@@ -98,7 +109,7 @@ function UserSearch ({match})
             }
             <button
             className = "buttonLoadMore"
-            onClick = {() => setPage (page+1)}>
+            onClick = {() => {if (page < pageLimit) {setPage (page+1)}}}>
                 Carregar mais
             </button>
         </div>
