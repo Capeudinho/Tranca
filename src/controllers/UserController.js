@@ -7,9 +7,19 @@ module.exports =
         UserService.list (request, response);
     },
 
-    async index (request, response)
+    async listpag (request, response)
     {
-        UserService.index (request, response);
+        UserService.listpag (request, response);
+    },
+
+    async namelistpag (request, response)
+    {
+        UserService.namelistpag (request, response);
+    },
+
+    async idindex (request, response)
+    {
+        UserService.idindex (request, response);
     },
 
     async store (request, response)
@@ -17,8 +27,8 @@ module.exports =
         UserService.store (request, response);
     },
 
-    async destroy (request, response)
+    async iddestroy (request, response)
     {
-        UserService.destroy (request, response);
+        UserService.iddestroy (request, response);
     }
 };

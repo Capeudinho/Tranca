@@ -10,10 +10,12 @@ routes.get ("/centrals", CentralController.index);
 routes.post ("/centrals", CentralController.store);
 routes.delete ("/centrals", CentralController.destroy);
 
-routes.get ("/users", UserController.list);
-routes.get ("/searchuser", UserController.index);
-routes.post ("/users", UserController.store);
-routes.delete ("/users", UserController.destroy);
+routes.get ("/userlist", UserController.list);
+routes.get ("/userlistpag", UserController.listpag);
+routes.get ("/usernamelistpag", UserController.namelistpag);
+routes.get ("/useridindex", UserController.idindex);
+routes.post ("/userstore", UserController.store);
+routes.delete ("/useriddestroy", UserController.iddestroy);
 
 routes.get ("/locks", LockController.list);
 routes.get ("/locks", LockController.index);

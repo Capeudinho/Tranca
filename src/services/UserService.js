@@ -4,11 +4,25 @@ module.exports =
 {
     async list (request, response)
     {
-       const users = await User.find ();
-       return response.json (users);
+        const users = await User.find ();
+        return response.json (users);
     },
     
-    async index (request, response)
+    async listpag (request, response)
+    {
+        const {page = 1} = request.query;
+        const users = await User.paginate ({}, {page, limit: 10});
+        return response.json (users);
+    },
+
+    async namelistpag (request, response)
+    {
+        const {name, page = 1} = request.query;
+        const users = await User.paginate ({name: {"$regex": name, "$options": "i"}}, {page, limit: 10});
+        return response.json (users);
+    },
+    
+    async idindex (request, response)
     {
         const {_id} = request.query;
         const user = await User.findById ({_id});
@@ -26,7 +40,12 @@ module.exports =
         return response.json (newUser);
     },
 
-    async destroy (request, response)
+    async update (request, response)
+    {
+        //complete later
+    },
+
+    async iddestroy (request, response)
     {
         const {_id} = request.query;
         const user = await User.findByIdAndDelete({_id});
