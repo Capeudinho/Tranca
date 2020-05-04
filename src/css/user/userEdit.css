@@ -1,0 +1,103 @@
+.userEditArea .nameInputGroup, .emailInputGroup
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    padding-bottom: 10px;
+}
+
+.userEditArea .singleMAC
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr 0fr;
+    padding-bottom: 10px; 
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.userEditArea label
+{
+    width: 50px;
+    height: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+}
+
+.userEditArea input
+{
+    height: 30px;
+    font-size: 12px;
+    padding-left: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}
+
+.userEditArea .MACInput
+{
+    margin-right: 10px;
+}
+
+.userEditArea .buttonsMain
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+}
+
+.userEditArea ::placeholder
+{
+    opacity: 1;
+    color: #cccccc;
+}
+
+.userEditArea button
+{
+    height: 30px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.userEditArea .buttonSubmit
+{
+    color: #51a3cc;
+    border-color: #51a3cc;
+}
+
+.userEditArea .buttonMACAdd, .buttonMACRemove
+{
+    color: #cccccc;
+    border-color: #cccccc;
+}
+
+.userEditArea .buttonMACRemove
+{
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.userEditArea .buttonSubmit:hover
+{
+    color: #ffffff;
+    background-color: #51a3cc;
+}
+
+.userEditArea .buttonMACAdd:hover, .buttonMACRemove:hover
+{
+    color: #ffffff;
+    background-color: #cccccc;
+}

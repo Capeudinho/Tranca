@@ -65,9 +65,9 @@ function UserInfo ({match})
                 "/useriddestroy",
                 {
                     params:
-                        {
-                            _id
-                        }
+                    {
+                        _id
+                    }
                 }
             );
             if (response.data._id === _id)
@@ -82,7 +82,13 @@ function UserInfo ({match})
         <div className = "userInfoArea">
             <div className = "name">{user.name}</div>
             <div className = "email">{user.email}</div>
-            <button className = "buttonEdit">Editar</button>
+            <Link to = {match.url.concat ("/edit")}>
+                <button
+                className = "buttonEdit"
+                >
+                    Editar
+                </button>
+            </Link>
             <Link to = {match.url.replace (user._id, "")}>
                 <button
                 className = "buttonDelete"

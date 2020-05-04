@@ -13,6 +13,7 @@ import BaseRight from "./base/BaseRight";
 import UserAdd from "./user/UserAdd";
 import UserList from "./user/UserList";
 import UserInfo from "./user/UserInfo";
+import UserEdit from "./user/UserEdit";
 import UserSearchBar from "./user/UserSearchBar";
 import UserSearch from "./user/UserSearch";
 
@@ -34,7 +35,7 @@ function App()
 
           <deletedUserContext.Provider value = {{deletedUser, setDeletedUser}}>
             <div className = "section sectionMain sectionCenter">
-              <Route path = "/" exact component = {BaseCenter}/>
+              <Route exact path = "/" component = {BaseCenter}/>
               <Route path = "/listusers" component = {UserSearchBar}/>
               <Route path = "/searchusers" component = {UserSearchBar}/>
               <Route path = "/listusers" component = {UserList}/>
@@ -42,10 +43,12 @@ function App()
             </div>
 
             <div className = "section sectionMain sectionRight">
-              <Route path = "/" exact component = {BaseRight}/>
+              <Route exact path = "/" component = {BaseRight}/>
               <Route path = "/adduser" component = {UserAdd}/>
               <Route path = "/listusers/:id" component = {UserInfo}/>
               <Route path = "/searchusers/:name/:id" component = {UserInfo}/>
+              <Route path = "/listusers/:id/edit" component = {UserEdit}/>
+              <Route path = "/searchusers/:name/:id/edit" component = {UserEdit}/>
             </div>
           </deletedUserContext.Provider>
         </div>

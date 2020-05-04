@@ -68,7 +68,7 @@ function UserAdd ()
         }
         catch (error)
         {
-            console.log (error);
+            throw new Error(error);
         }
     }
 
@@ -139,7 +139,7 @@ function UserAdd ()
                     type = "submit"
                     onClick = {(e) => handleSubmit (e)}
                     >
-                        Salvar
+                        Criar
                     </button>
                 </div>
             </form>
