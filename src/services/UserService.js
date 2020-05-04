@@ -25,14 +25,14 @@ module.exports =
     async idindex (request, response)
     {
         const {_id} = request.query;
-        const user = await User.findById ({_id});
+        const user = await User.findById (_id);
         return response.json (user);
     },
 
     async store (request, response)
     {
-        const {name, email, MACs} = request.body;
-        const user = await User.findOne ({name});
+        const {name = "", email = "", MACs = []} = request.body;
+        const user = await User.findOne (name);
         if (user === null)
         {
             var newUser = await User.create ({name, email, MACs});
@@ -40,15 +40,18 @@ module.exports =
         return response.json (newUser);
     },
 
-    async update (request, response)
+    async idupdate (request, response)
     {
-        //complete later
+        const {_id} = request.query;
+        const {name = "", email = "", MACs = []} = request.body;
+        const user = await User.findByIdAndUpdate (_id, {name, email, MACs}, {new: true});
+        return response.json (user);
     },
 
     async iddestroy (request, response)
     {
         const {_id} = request.query;
-        const user = await User.findByIdAndDelete({_id});
+        const user = await User.findByIdAndDelete (_id);
         return response.json (user);
     }
 };

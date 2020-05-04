@@ -15,6 +15,7 @@ routes.get ("/userlistpag", UserController.listpag);
 routes.get ("/usernamelistpag", UserController.namelistpag);
 routes.get ("/useridindex", UserController.idindex);
 routes.post ("/userstore", UserController.store);
+routes.put ("/useridupdate", UserController.idupdate)
 routes.delete ("/useriddestroy", UserController.iddestroy);
 
 routes.get ("/locks", LockController.list);

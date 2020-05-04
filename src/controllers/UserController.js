@@ -27,6 +27,11 @@ module.exports =
         UserService.store (request, response);
     },
 
+    async idupdate (request, response)
+    {
+        UserService.idupdate (request, response);
+    },
+
     async iddestroy (request, response)
     {
         UserService.iddestroy (request, response);
