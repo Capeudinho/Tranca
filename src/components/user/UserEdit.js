@@ -1,11 +1,14 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
+
+import updatedUserContext from "../context/updatedUserContext";
 
 import "../../css/user/userEdit.css";
 
 function UserEdit ({match})
 {
+    const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const [getUser, setGetUser] = useState ({});
     const [user, setUser] = useState ({});
     const [_id, set_id] = useState ("");
@@ -112,19 +115,21 @@ function UserEdit ({match})
             (
                 "/useridupdate",
                 {
-                    params:
-                    {
-                        _id
-                    },
                     name,
                     email,
                     MACs
+                },
+                {
+                    params:
+                    {
+                        _id
+                    }
                 }
             );
-            console.log (response.data);
             if (response.data !== null)
             {
-                window.alert(`O usuário ${user.name} foi atualizado.`)
+                window.alert(`O usuário ${user.name} foi atualizado.`);
+                setUpdatedUser (user);
             }
         }
         catch (error)
@@ -133,7 +138,7 @@ function UserEdit ({match})
         }
     }
 
-    let userMACsToList;
+    var userMACsToList;
     if (user.MACs !== undefined && user.MACs !== null)
     {
         userMACsToList = user.MACs.map
@@ -169,7 +174,7 @@ function UserEdit ({match})
                 <div className = "nameInputGroup">
                     <label htmlFor = "name">Nome</label>
                     <input
-                        form = "userAdd"
+                        form = "userEdit"
                         placeholder = "Nome"
                         className = "nameInput"
                         value = {user.name || ""}
@@ -181,7 +186,7 @@ function UserEdit ({match})
                 <div className = "emailInputGroup">
                     <label htmlFor = "email">E-mail</label>
                     <input
-                        form = "userAdd"
+                        form = "userEdit"
                         placeholder = "E-mail"
                         className = "emailInput"
                         value = {user.email || ""}

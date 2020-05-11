@@ -9,15 +9,14 @@ function BaseLeft ()
         <div className = "baseLeftArea">
             <div className = "area areaRecents">
                 <Link to = "/">
-                    <button className = "buttonList">Recentes</button>
+                    <button className = "buttonList">Principal</button>
                 </Link>
             </div>
-
             <div className = "area areaGroups">
-                <button className = "buttonList">Grupos</button>
-                <button className = "buttonAdd">+</button>
+                <Link to = "/groups">
+                    <button className = "buttonList">Grupos</button>
+                </Link>
             </div>
-
             <div className = "area areaUsers">
                 <Link to = "/listusers">
                     <button className = "buttonList">Usuários</button>
@@ -26,10 +25,12 @@ function BaseLeft ()
                     <button className = "buttonAdd">+</button>
                 </Link>
             </div>
-            
             <div className = "area areaRoles">
                 <button className = "buttonList">Funções</button>
                 <button className = "buttonAdd">+</button>
+            </div>
+            <div className = "area areaMenu">
+                <button className = "buttonList buttonListMenu">Menu</button>
             </div>
         </div>
     )

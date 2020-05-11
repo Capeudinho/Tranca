@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {BrowserRouter, Route} from "react-router-dom";
-import deletedUserContext from "./context/deletedUserContext";
 
 import "../global.css";
 import "../css/app.css";
@@ -17,9 +16,28 @@ import UserEdit from "./user/UserEdit";
 import UserSearchBar from "./user/UserSearchBar";
 import UserSearch from "./user/UserSearch";
 
+import GroupCenter from "./group/GroupCenter";
+import GroupExplorer from "./group/GroupExplorer";
+import GroupList from "./group/GroupList";
+import GroupInfo from "./group/GroupInfo";
+import GroupAdd from "./group/GroupAdd";
+import GroupEdit from "./group/GroupEdit";
+
+import deletedUserContext from "./context/deletedUserContext";
+import updatedUserContext from "./context/updatedUserContext";
+import groupPathContext from "./context/groupPathContext";
+import deletedGroupsContext from "./context/deletedGroupsContext";
+import updatedGroupContext from "./context/updatedGroupContext";
+import addedGroupContext from "./context/addedGroupContext";
+
 function App()
 {
   const [deletedUser, setDeletedUser] = useState ([]);
+  const [updatedUser, setUpdatedUser] = useState ([]);
+  const [groupPath, setGroupPath] = useState ("");
+  const [deletedGroups, setDeletedGroups] = useState ([]);
+  const [updatedGroup, setUpdatedGroup] = useState ([]);
+  const [addedGroup, setAddedGroup] = useState ([]);
 
   return (
     <BrowserRouter>
@@ -30,16 +48,25 @@ function App()
 
         <div className = "Main">
           <div className = "section sectionMain sectionLeft">
-          <Route path = "/" component = {BaseLeft}/>
+            <Route path = "/" component = {BaseLeft}/>
           </div>
 
+          <updatedUserContext.Provider value = {{updatedUser, setUpdatedUser}}>
           <deletedUserContext.Provider value = {{deletedUser, setDeletedUser}}>
+          <groupPathContext.Provider value = {{groupPath, setGroupPath}}>
+          <deletedGroupsContext.Provider value = {{deletedGroups, setDeletedGroups}}>
+          <updatedGroupContext.Provider value = {{updatedGroup, setUpdatedGroup}}>
+          <addedGroupContext.Provider value = {{addedGroup, setAddedGroup}}>
             <div className = "section sectionMain sectionCenter">
               <Route exact path = "/" component = {BaseCenter}/>
               <Route path = "/listusers" component = {UserSearchBar}/>
               <Route path = "/searchusers" component = {UserSearchBar}/>
               <Route path = "/listusers" component = {UserList}/>
               <Route path = "/searchusers/:name" component = {UserSearch}/>
+              <div className = "groupCenterArea">
+                  <Route path = "/groups" component = {GroupExplorer}/>
+                  <Route path = "/groups/:id" component = {GroupList}/>
+              </div>
             </div>
 
             <div className = "section sectionMain sectionRight">
@@ -49,8 +76,16 @@ function App()
               <Route path = "/searchusers/:name/:id" component = {UserInfo}/>
               <Route path = "/listusers/:id/edit" component = {UserEdit}/>
               <Route path = "/searchusers/:name/:id/edit" component = {UserEdit}/>
+              <Route path = "/groups/:id/group/:id" component = {GroupInfo}/>
+              <Route path = "/groups/:id/group/:id/edit" component = {GroupEdit}/>
+              <Route path = "/groups/:id/addgroup" component = {GroupAdd}/>
             </div>
+          </addedGroupContext.Provider>
+          </updatedGroupContext.Provider>
+          </deletedGroupsContext.Provider>
+          </groupPathContext.Provider>
           </deletedUserContext.Provider>
+          </updatedUserContext.Provider>
         </div>
         
       </div>

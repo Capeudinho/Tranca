@@ -3,12 +3,14 @@ import api from "../../services/api";
 import {Link} from "react-router-dom";
 
 import deletedUserContext from "../context/deletedUserContext";
+import updatedUserContext from "../context/updatedUserContext";
 
 import "../../css/user/userInfo.css";
 
 function UserInfo ({match})
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
+    const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const [user, setUser] = useState ({});
     const [_id, set_id] = useState ("");
 
@@ -54,6 +56,18 @@ function UserInfo ({match})
             }
             runEffect();
         }
+    );
+
+    useEffect
+    (
+        () =>
+        {
+            if (updatedUser !== {} && user._id === updatedUser._id)
+            {
+                setUser(updatedUser);
+            }
+        },
+        [updatedUser]
     );
 
     async function handleDeleteUser (_id)

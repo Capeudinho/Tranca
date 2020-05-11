@@ -44,31 +44,24 @@ function UserAdd ()
 
     async function handleSubmit (e)
     {
-        try
+        e.preventDefault ();
+        const response = await api.post
+        (
+            "/userstore",
+            {
+                name,
+                email,
+                MACs
+            }
+        );
+        if (response.data === "")
         {
-            e.preventDefault ();
-            const response = await api.post
-            (
-                "/userstore",
-                {
-                    name,
-                    email,
-                    MACs
-                }
-            );
-            if (response.data === "")
-            {
-                window.alert("Já existe um usuário com esse nome.")
-            }
-            else
-            {
-                window.alert(`O usuário ${name} foi criado.`)
-                document.getElementById ("userAdd").reset();
-            }
+            window.alert("Já existe um usuário com esse nome.")
         }
-        catch (error)
+        else
         {
-            throw new Error(error);
+            window.alert(`O usuário ${name} foi criado.`)
+            document.getElementById ("userAdd").reset();
         }
     }
 
@@ -83,7 +76,7 @@ function UserAdd ()
                         className = "nameInput"
                         value = {name}
                         onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,} "
+                        pattern = "[A-Za-z0-9_]{3,}"
                         required
                     />
                 </div>

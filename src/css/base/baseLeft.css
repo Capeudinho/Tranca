@@ -26,11 +26,17 @@
     padding-left: 10px;
 }
 
+.baseLeftArea .buttonListMenu
+{
+    color: #cccccc;
+    border-color: #cccccc;
+}
+
 .baseLeftArea .buttonAdd
 {
     width: 30px;
-    color: #cccccc;
-    border-color: #cccccc;
+    color: #51cc51;
+    border-color: #51cc51;
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;
@@ -43,8 +49,14 @@
     background-color: #51a3cc;
 }
 
-.baseLeftArea .buttonAdd:hover
+.baseLeftArea .buttonListMenu:hover
 {
     color: #ffffff;
     background-color: #cccccc;
+}
+
+.baseLeftArea .buttonAdd:hover
+{
+    color: #ffffff;
+    background-color: #51cc51;
 }

@@ -3,12 +3,14 @@ import {Link} from "react-router-dom";
 import api from "../../services/api";
 
 import deletedUserContext from "../context/deletedUserContext";
+import updatedUserContext from "../context/updatedUserContext";
 
 import "../../css/user/userSearch.css";
 
 function UserSearch ({match})
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
+    const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const [users, setUsers] = useState ([]);
     const [name, setName] = useState ("");
     const [page, setPage] = useState (1);
@@ -54,12 +56,31 @@ function UserSearch ({match})
                     if (user._id === deletedUser._id)
                     {
                         users.splice (index, 1);
-                        setDeletedUser ({});
                     }
                 }
             )
         },
         [deletedUser]
+    );
+
+    useEffect
+    (
+        () =>
+        {
+            users.map
+            (
+                (user, index) =>
+                {
+                    if (user._id === updatedUser._id)
+                    {
+                        var newUsers = [...users];
+                        newUsers [index] = updatedUser;
+                        setUsers(newUsers);
+                    }
+                }
+            )
+        },
+        [updatedUser]
     );
 
     useEffect

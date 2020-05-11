@@ -3,12 +3,14 @@ import api from "../../services/api";
 import {Link} from "react-router-dom";
 
 import deletedUserContext from "../context/deletedUserContext";
+import updatedUserContext from "../context/updatedUserContext";
 
 import "../../css/user/userList.css";
 
 function UserList ()
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
+    const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const [users, setUsers] = useState ([]);
     const [page, setPage] = useState (1);
     const [pageLimit, setPageLimit] = useState (1);
@@ -33,7 +35,6 @@ function UserList ()
                     if (user._id === deletedUser._id)
                     {
                         users.splice (index, 1);
-                        setDeletedUser ({});
                     }
                 }
             )
@@ -45,23 +46,36 @@ function UserList ()
     (
         () =>
         {
-            try
-            {
-                const runEffect = async () =>
+            users.map
+            (
+                (user, index) =>
                 {
-                    const response = await api.get
-                    (
-                        `/userlistpag?page=${page}`
-                    );
-                    setPageLimit (response.data.pages);
-                    setUsers ([...users, ...response.data.docs]);
+                    if (user._id === updatedUser._id)
+                    {
+                        var newUsers = [...users];
+                        newUsers [index] = updatedUser;
+                        setUsers(newUsers);
+                    }
                 }
-                runEffect();
-            }
-            catch (error)
+            )
+        },
+        [updatedUser]
+    );
+
+    useEffect
+    (
+        () =>
+        {
+            const runEffect = async () =>
             {
-                console.log (error);
+                const response = await api.get
+                (
+                    `/userlistpag?page=${page}`
+                );
+                setPageLimit (response.data.pages);
+                setUsers ([...users, ...response.data.docs]);
             }
+            runEffect();
         },
         [page]
     );

@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 
 import "../../css/user/userSearchBar.css";
 
-function UserSearchBar ({match})
+function UserSearchBar ()
 {
     const [name, setName] = useState ("");
 
