@@ -1,14 +1,8 @@
 const {Router} = require ("express");
-const CentralController = require ("./controllers/CentralController");
 const UserController = require ("./controllers/UserController");
-const LockController = require ("./controllers/LockController");
+const GroupController = require ("./controllers/GroupController");
 
 const routes = Router ();
-
-routes.get ("/centrals", CentralController.list);
-routes.get ("/centrals", CentralController.index);
-routes.post ("/centrals", CentralController.store);
-routes.delete ("/centrals", CentralController.destroy);
 
 routes.get ("/userlist", UserController.list);
 routes.get ("/userlistpag", UserController.listpag);
@@ -18,9 +12,13 @@ routes.post ("/userstore", UserController.store);
 routes.put ("/useridupdate", UserController.idupdate)
 routes.delete ("/useriddestroy", UserController.iddestroy);
 
-routes.get ("/locks", LockController.list);
-routes.get ("/locks", LockController.index);
-routes.post ("/locks", LockController.store);
-routes.delete ("/locks", LockController.destroy);
+routes.get ("/grouplist", GroupController.list);
+routes.get ("/groupidindex", GroupController.idindex);
+routes.get ("/grouplevelindex", GroupController.levelindex);
+routes.get ("/groupcontentindex", GroupController.contentindex);
+routes.post ("/groupstore", GroupController.store);
+routes.put ("/groupidupdate", GroupController.idupdate);
+routes.put ("/groupidupdatesimp", GroupController.idupdatesimp);
+routes.delete ("/groupiddestroy", GroupController.iddestroy);
 
 module.exports = routes;

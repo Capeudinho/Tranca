@@ -32,7 +32,7 @@ module.exports =
     async store (request, response)
     {
         const {name = "", email = "", MACs = []} = request.body;
-        const user = await User.findOne (name);
+        const user = await User.findOne ({name});
         if (user === null)
         {
             var newUser = await User.create ({name, email, MACs});
