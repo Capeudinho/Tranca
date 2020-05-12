@@ -1,4 +1,5 @@
 const Group = require ("../models/Group");
+const Lock = require ("../models/Lock");
 
 module.exports =
 {
@@ -12,13 +13,19 @@ module.exports =
     {
         const {_id} = request.query;
         const group = await Group.findById (_id);
-        return response.json (group);
+        const lock = await Lock.findById (_id);
+        if (group === null && lock !== null)
+        {return response.json (lock);}
+        else if (group !== null && lock === null)
+        {return response.json (group);}
+        else
+        {return response.json (group);}
     },
 
     async levelindex (request, response)
     {
         const {level} = request.query;
-        const groups = await Group.find ({level});
+        const groups = await Group.find ({holder: {$size: level}});
         return response.json (groups);
     },
 
@@ -26,6 +33,8 @@ module.exports =
     {
         const {content} = request.query;
         const groups = await Group.find ({_id: {$in: content}});
+        const locks = await Lock.find ({_id: {$in: content}});
+        groups.push (...locks);
         return response.json (groups);
     },
 
@@ -47,19 +56,19 @@ module.exports =
                     content: []
                 }
             );
+            var newContent = holderGroup.content;
+            newContent.push (newGroup._id);
+            var newContentGroup = await Group.findByIdAndUpdate
+            (
+                _id,
+                {
+                    content: newContent
+                },
+                {
+                    new: true
+                }
+            );
         }
-        var newContent = holderGroup.content;
-        newContent.push (newGroup._id);
-        const newContentGroup = await Group.findByIdAndUpdate
-        (
-            _id,
-            {
-                content: newContent
-            },
-            {
-                new: true
-            }
-        );
         return response.json ({newGroup, newContentGroup});
     },
 
@@ -84,8 +93,10 @@ module.exports =
         const {_id} = request.query;
         const group = await Group.findByIdAndDelete (_id);
         const otherGroups = await Group.find ({holder: {$in: [_id]}});
-        await Group.updateMany ({$pullAll: {content: [_id]}});
+        const otherLocks = await Lock.find ({holder: {$in: [_id]}});
+        var newContentGroup = await Group.findOneAndUpdate ({content: {$in: [_id]}}, {$pullAll: {content: [_id]}}, {new: true});
         await Group.deleteMany ({holder: {$in: [_id]}});
-        return response.json ({group, otherGroups});
+        await Lock.deleteMany ({holder: {$in: [_id]}});
+        return response.json ({group, otherGroups, otherLocks, newContentGroup});
     }
 };

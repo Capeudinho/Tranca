@@ -1,36 +1,34 @@
-const Lock = require ("../models/Lock");
+const LockService = require ("../services/LockService");
 
 module.exports =
 {
     async list (request, response)
     {
-       const locks = await Lock.find ();
-       return response.json (locks);
+        LockService.list (request, response);
     },
-    
-    async index (request, response)
+
+    async idindex (request, response)
     {
-       const lock = await Lock.find ();
-       return response.json (lock);
+        LockService.idindex (request, response);
     },
 
     async store (request, response)
     {
-        const {name} = request.body;
-
-        const lock = await Lock.findOne ({name});
-        if (lock === null)
-        {
-            var newLock = await Lock.create ({name});
-        }
-
-        return response.json (newLock);
+        LockService.store (request, response);
     },
 
-    async destroy (request, response)
+    async idupdate (request, response)
     {
-        const {name} = request.query;
-        const lock = await Lock.deleteMany (Lock.find ({name}));
-        return response.json (lock);
+        LockService.idupdate (request, response);
+    },
+
+    async idupdatesimp (request, response)
+    {
+        LockService.idupdatesimp (request, response);
+    },
+
+    async iddestroy (request, response)
+    {
+        LockService.iddestroy (request, response);
     }
 };
