@@ -21,6 +21,11 @@
     margin-bottom: 10px;
 }
 
+.groupListArea .buttonLock
+{
+    border-color: #51a3cc;
+}
+
 .groupListArea .buttonAdd
 {
     border-color: #51cc51;
@@ -36,6 +41,11 @@
 .groupListArea button:hover
 {
     background-color: #cccccc;
+}
+
+.groupListArea .buttonLock:hover
+{
+    background-color: #51a3cc;
 }
 
 .groupListArea .buttonAdd:hover

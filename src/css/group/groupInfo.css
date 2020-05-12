@@ -1,11 +1,19 @@
-.baseRightArea .name
+.groupInfoArea .name
 {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-.baseRightArea button
+.groupInfoArea .type
+{
+    font-size: 18px;
+    font-weight: bold;
+    color: #cccccc;
+    margin-bottom: 10px;
+}
+
+.groupInfoArea button
 {
     height: 30px;
     width: 100%;
@@ -19,7 +27,7 @@
     cursor: pointer;
 }
 
-.baseRightArea .buttonDelete
+.groupInfoArea .buttonDelete
 {
     color: #cc5151;
     border-color: #cc5151;
@@ -27,7 +35,7 @@
     padding-left: 10px;
 }
 
-.baseRightArea .buttonEdit
+.groupInfoArea .buttonEdit
 {
     color: #cccccc;
     border-color: #cccccc;
@@ -35,13 +43,13 @@
     padding-left: 10px;
 }
 
-.baseRightArea .buttonDelete:hover
+.groupInfoArea .buttonDelete:hover
 {
     color: #ffffff;
     background-color: #cc5151;
 }
 
-.baseRightArea .buttonEdit:hover
+.groupInfoArea .buttonEdit:hover
 {
     color: #ffffff;
     background-color: #cccccc;

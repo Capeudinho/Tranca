@@ -3,12 +3,14 @@ import api from "../../services/api";
 import {Link} from "react-router-dom";
 
 import updatedGroupContext from "../context/updatedGroupContext";
+import updatedLockContext from "../context/updatedLockContext";
 
 import "../../css/group/groupEdit.css";
 
 function UserEdit ({match})
 {
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
+    const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
     const [group, setGroup] = useState ({name: ""});
     const [update, setUpdate] = useState (0);
 
@@ -54,26 +56,53 @@ function UserEdit ({match})
     {
         try
         {
-            e.preventDefault ();
-            const _id = group._id;
-            const name = group.name;
-            const response = await api.put
-            (
-                "/groupidupdatesimp",
-                {
-                    name
-                },
-                {
-                    params:
-                    {
-                        _id
-                    }
-                }
-            );
-            if (response.data !== null)
+            if (group.hasOwnProperty ("content"))
             {
-                window.alert(`O grupo ${group.name} foi atualizado.`);
-                setUpdatedGroup (group);
+                e.preventDefault ();
+                const _id = group._id;
+                const name = group.name;
+                const response = await api.put
+                (
+                    "/groupidupdatesimp",
+                    {
+                        name
+                    },
+                    {
+                        params:
+                        {
+                            _id
+                        }
+                    }
+                );
+                if (response.data !== null)
+                {
+                    window.alert(`O grupo ${group.name} foi atualizado.`);
+                    setUpdatedGroup (group);
+                }
+            }
+            else
+            {
+                e.preventDefault ();
+                const _id = group._id;
+                const name = group.name;
+                const response = await api.put
+                (
+                    "/lockidupdatesimp",
+                    {
+                        name
+                    },
+                    {
+                        params:
+                        {
+                            _id
+                        }
+                    }
+                );
+                if (response.data !== null)
+                {
+                    window.alert(`A tranca ${group.name} foi atualizada.`);
+                    setUpdatedLock (group);
+                }
             }
         }
         catch (error)

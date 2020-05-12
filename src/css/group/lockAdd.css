@@ -1,11 +1,11 @@
-.groupAddArea .nameInputGroup
+.lockAddArea .nameInputGroup
 {
     display: grid;
     grid-template-columns: 0fr 1fr;
     padding-bottom: 10px;
 }
 
-.groupAddArea label
+.lockAddArea label
 {
     width: 50px;
     height: 30px;
@@ -19,7 +19,7 @@
     align-items: center !important;
 }
 
-.groupAddArea input
+.lockAddArea input
 {
     height: 30px;
     font-size: 12px;
@@ -29,13 +29,13 @@
     border-color: #cccccc;
 }
 
-.groupAddArea ::placeholder
+.lockAddArea ::placeholder
 {
     opacity: 1;
     color: #cccccc;
 }
 
-.groupAddArea button
+.lockAddArea button
 {
     height: 30px;
     width: 100%;
@@ -50,13 +50,13 @@
     padding-left: 10px;
 }
 
-.groupAddArea .buttonSubmit
+.lockAddArea .buttonSubmit
 {
     color: #51cc51;
     border-color: #51cc51;
 }
 
-.groupAddArea .buttonSubmit:hover
+.lockAddArea .buttonSubmit:hover
 {
     color: #ffffff;
     background-color: #51cc51;

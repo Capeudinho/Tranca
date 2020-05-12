@@ -1,13 +1,13 @@
 import React, {useState, useContext} from "react";
 import api from "../../services/api";
 
-import addedGroupContext from "../context/addedGroupContext";
+import addedLockContext from "../context/addedLockContext";
 
-import "../../css/group/groupAdd.css";
+import "../../css/group/lockAdd.css";
 
-function GroupAdd ({match})
+function LockAdd ({match})
 {
-    const {addedGroup, setAddedGroup} = useContext (addedGroupContext);
+    const {addedLock, setAddedLock} = useContext (addedLockContext);
     const [name, setName] = useState ("");
     
     function handleChangeName (e)
@@ -22,7 +22,7 @@ function GroupAdd ({match})
         const _id = match.params.id;
         const response = await api.post
         (
-            "/groupstore",
+            "/lockstore",
             {
                 name,
                 _id
@@ -30,19 +30,19 @@ function GroupAdd ({match})
         );
         if (response.data === "")
         {
-            window.alert("Já existe um grupo com esse nome.");
+            window.alert("Já existe uma tranca com esse nome.");
         }
         else
         {
-            window.alert(`O grupo ${name} foi criado.`);
-            document.getElementById ("groupAdd").reset();
-            setAddedGroup (response.data);
+            window.alert(`A tranca ${name} foi criada.`);
+            document.getElementById ("lockAdd").reset();
+            setAddedLock (response.data);
         }
     }
 
     return (
-        <div className = "groupAddArea">
-            <form id = "groupAdd">
+        <div className = "lockAddArea">
+            <form id = "lockAdd">
                 <div className = "nameInputGroup">
                     <label htmlFor = "name">Nome</label>
                     <input
@@ -67,4 +67,4 @@ function GroupAdd ({match})
     )
 }
 
-export default GroupAdd;
+export default LockAdd;
