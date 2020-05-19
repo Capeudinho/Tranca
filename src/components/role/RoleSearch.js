@@ -2,30 +2,30 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
 import api from "../../services/api";
 
-import deletedUserContext from "../context/deletedUserContext";
-import updatedUserContext from "../context/updatedUserContext";
-import addedUserContext from "../context/addedUserContext";
+import deletedRoleContext from "../context/deletedRoleContext";
+import updatedRoleContext from "../context/updatedRoleContext";
+import addedRoleContext from "../context/addedRoleContext";
 
-import "../../css/user/userSearch.css";
+import "../../css/role/roleSearch.css";
 
-function UserSearch ({match})
+function RoleSearch ({match})
 {
-    const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
-    const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
-    const {addedUser, setAddedUser} = useContext (addedUserContext);
-    const [users, setUsers] = useState ([]);
+    const {deletedRole, setDeletedRole} = useContext (deletedRoleContext);
+    const {updatedRole, setUpdatedRole} = useContext (updatedRoleContext);
+    const {addedRole, setAddedRole} = useContext (addedRoleContext);
+    const [roles, setRoles] = useState ([]);
     const [page, setPage] = useState (1);
     const [pageLimit, setPageLimit] = useState (1);
-    const [name, setName] = useState ("");
     const [update, setUpdate] = useState (0);
 
     useEffect
     (
         () =>
         {
-            setUsers ([]);
+            setRoles ([]);
             setPage (1);
             setUpdate (update+1);
+            console.log (match);
         },
         [match.params.name]
     );
@@ -39,7 +39,7 @@ function UserSearch ({match})
                 const name = match.params.name;
                 const response = await api.get
                 (
-                    "/usernamelistpag",
+                    "/rolenamelistpag",
                     {
                         params:
                         {
@@ -49,7 +49,7 @@ function UserSearch ({match})
                     }
                 );
                 setPageLimit (response.data.pages);
-                setUsers ([...users, ...response.data.docs]);
+                setRoles ([...roles, ...response.data.docs]);
             }
             runEffect();
         },
@@ -60,74 +60,74 @@ function UserSearch ({match})
     (
         () =>
         {
-            if (deletedUser.hasOwnProperty ("_id"))
+            if (deletedRole.hasOwnProperty ("_id"))
             {
-                users.map
+                roles.map
                 (
-                    (user, index) =>
+                    (role, index) =>
                     {
-                        if (user._id === deletedUser._id)
+                        if (role._id === deletedRole._id)
                         {
-                            users.splice (index, 1);
+                            roles.splice (index, 1);
                         }
                     }
                 )
             }
         },
-        [deletedUser]
+        [deletedRole]
     );
 
     useEffect
     (
         () =>
         {
-            if (updatedUser.hasOwnProperty ("_id"))
-            { 
-                users.map
+            if (updatedRole.hasOwnProperty ("_id"))
+            {
+                roles.map
                 (
-                    (user, index) =>
+                    (role, index) =>
                     {
-                        if (user._id === updatedUser._id)
+                        if (role._id === updatedRole._id)
                         {
-                            var newUsers = [...users];
-                            newUsers [index] = updatedUser;
-                            setUsers(newUsers);
+                            var newRoles = [...roles];
+                            newRoles[index] = updatedRole;
+                            setRoles(newRoles);
                         }
                     }
                 )
             }
         },
-        [updatedUser]
+        [updatedRole]
     );
 
     useEffect
     (
         () =>
         {
-            if (addedUser.hasOwnProperty ("_id") && addedUser.name.includes (match.params.name))
+            if (addedRole.hasOwnProperty ("_id") && addedRole.name.includes (match.params.name))
             {
-                var newUsers = [...users];
-                newUsers.unshift (addedUser);
-                setUsers (newUsers);
+                var newRoles = [...roles];
+                newRoles.unshift (addedRole);
+                setRoles (newRoles);
             }
         },
-        [addedUser]
+        [addedRole]
     );
 
     return (
-        <div className = "userSearchArea">
+        <div className = "roleSearchArea">
             {
-                users.map
+                roles.map
                 (
-                    (user, index) =>
+                    (role, index) =>
                     {
                         return (
-                            <div key = {index} className = "user">
-                                <Link key = {index} to = {`/searchusers/${match.params.name}/${user._id}`}>
+                            <div key = {index} className = "role">
+                                <Link to = {`/searchroles/${match.params.name}/${role._id}`}>
                                     <button
                                     className = "buttonUser"
                                     key = {index}>
-                                        {user.name}
+                                        {role.name}
                                     </button>
                                 </Link>
                             </div>
@@ -144,4 +144,4 @@ function UserSearch ({match})
     )
 }
 
-export default UserSearch;
+export default RoleSearch;

@@ -2,18 +2,18 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
-import deletedUserContext from "../context/deletedUserContext";
-import updatedUserContext from "../context/updatedUserContext";
-import addedUserContext from "../context/addedUserContext";
+import deletedRoleContext from "../context/deletedRoleContext";
+import updatedRoleContext from "../context/updatedRoleContext";
+import addedRoleContext from "../context/addedRoleContext";
 
-import "../../css/user/userList.css";
+import "../../css/role/roleList.css";
 
-function UserList ()
+function RoleList ()
 {
-    const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
-    const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
-    const {addedUser, setAddedUser} = useContext (addedUserContext);
-    const [users, setUsers] = useState ([]);
+    const {deletedRole, setDeletedRole} = useContext (deletedRoleContext);
+    const {updatedRole, setUpdatedRole} = useContext (updatedRoleContext);
+    const {addedRole, setAddedRole} = useContext (addedRoleContext);
+    const [roles, setRoles] = useState ([]);
     const [page, setPage] = useState (1);
     const [pageLimit, setPageLimit] = useState (1);
 
@@ -34,7 +34,7 @@ function UserList ()
             {
                 const response = await api.get
                 (
-                    "/userlistpag",
+                    "/rolelistpag",
                     {
                         params:
                         {
@@ -43,7 +43,7 @@ function UserList ()
                     }
                 );
                 setPageLimit (response.data.pages);
-                setUsers ([...users, ...response.data.docs]);
+                setRoles ([...roles, ...response.data.docs]);
             }
             runEffect();
         },
@@ -54,74 +54,74 @@ function UserList ()
     (
         () =>
         {
-            if (deletedUser.hasOwnProperty ("_id"))
+            if (deletedRole.hasOwnProperty ("_id"))
             {
-                users.map
+                roles.map
                 (
-                    (user, index) =>
+                    (role, index) =>
                     {
-                        if (user._id === deletedUser._id)
+                        if (role._id === deletedRole._id)
                         {
-                            users.splice (index, 1);
+                            roles.splice (index, 1);
                         }
                     }
                 )
             }
         },
-        [deletedUser]
+        [deletedRole]
     );
 
     useEffect
     (
         () =>
         {
-            if (updatedUser.hasOwnProperty ("_id"))
+            if (updatedRole.hasOwnProperty ("_id"))
             {
-                users.map
+                roles.map
                 (
-                    (user, index) =>
+                    (role, index) =>
                     {
-                        if (user._id === updatedUser._id)
+                        if (role._id === updatedRole._id)
                         {
-                            var newUsers = [...users];
-                            newUsers [index] = updatedUser;
-                            setUsers(newUsers);
+                            var newRoles = [...roles];
+                            newRoles[index] = updatedRole;
+                            setRoles(newRoles);
                         }
                     }
                 )
             }
         },
-        [updatedUser]
+        [updatedRole]
     );
 
     useEffect
     (
         () =>
         {
-            if (addedUser.hasOwnProperty ("_id"))
+            if (addedRole.hasOwnProperty ("_id"))
             {
-                var newUsers = [...users];
-                newUsers.unshift (addedUser);
-                setUsers (newUsers);
+                var newRoles = [...roles];
+                newRoles.unshift (addedRole);
+                setRoles (newRoles);
             }
         },
-        [addedUser]
+        [addedRole]
     );
 
     return (
-        <div className = "userListArea">
+        <div className = "roleListArea">
             {
-                users.map
+                roles.map
                 (
-                    (user, index) =>
+                    (role, index) =>
                     {
                         return (
                             <div key = {index} className = "user">
-                                <Link key = {index} to = {`/listusers/${user._id}`}>
+                                <Link key = {index} to = {`/listroles/${role._id}`}>
                                     <button
                                     className = "buttonUser"
                                     key = {index}>
-                                        {user.name}
+                                        {role.name}
                                     </button>
                                 </Link>
                             </div>
@@ -138,4 +138,4 @@ function UserList ()
     )
 }
 
-export default UserList;
+export default RoleList;

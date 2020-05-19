@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 
-import "../../css/user/userSearchBar.css";
+import "../../css/role/roleSearchBar.css";
 
-function UserSearchBar ({match})
+function RoleSearchBar ({match})
 {
     const [name, setName] = useState ("");
 
@@ -29,16 +29,16 @@ function UserSearchBar ({match})
     {
         if (name === "")
         {
-            return "/listusers";
+            return "/listroles";
         }
         else
         {
-            return `/searchusers/${name}`;
+            return `/searchroles/${name}`;
         }
     }
 
     return (
-        <div className = "userSearchBarArea">
+        <div className = "roleSearchBarArea">
             <form className = "nameInputGroup">
                 <label>Nome</label>
                 <input
@@ -51,13 +51,13 @@ function UserSearchBar ({match})
                     <button className = "buttonSearch">Pesquisar</button>
                 </Link>
             </form>
-            <Link to = {`${match.url}/adduser`}>
-                <button className = "buttonAdd buttonAddUser">
-                    Usuário
+            <Link to = {`${match.url}/addrole`}>
+                <button className = "buttonAdd buttonAddRole">
+                    Função
                 </button>
             </Link>
         </div>
     )
 }
 
-export default UserSearchBar;
+export default RoleSearchBar;

@@ -35,6 +35,23 @@
     border-color: #cccccc;
 }
 
+.groupEditArea .roleSelect
+{
+    border-color: #cccccc;
+    margin-right: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.groupEditArea .singleRole
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr 0fr;
+    padding-bottom: 10px; 
+    height: 30px;
+    margin-bottom: 10px;
+}
+
 .groupEditArea ::placeholder
 {
     opacity: 1;
@@ -56,10 +73,37 @@
     padding-left: 10px;
 }
 
+.groupEditArea .buttonRoleAdd, .buttonRoleRemove
+{
+    color: #cccccc;
+    border-color: #cccccc;
+}
+
+.groupEditArea .buttonRoleRemove
+{
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.groupEditArea .buttonRoleAdd
+{
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
 .groupEditArea .buttonSubmit
 {
     color: #51a3cc;
     border-color: #51a3cc;
+}
+
+.groupEditArea .buttonRoleAdd:hover, .buttonRoleRemove:hover
+{
+    color: #ffffff;
+    background-color: #cccccc;
 }
 
 .groupEditArea .buttonSubmit:hover

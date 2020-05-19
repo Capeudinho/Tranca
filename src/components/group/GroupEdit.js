@@ -2,16 +2,19 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import allRolesContext from "../context/allRolesContext";
 import updatedGroupContext from "../context/updatedGroupContext";
 import updatedLockContext from "../context/updatedLockContext";
 
 import "../../css/group/groupEdit.css";
 
-function UserEdit ({match})
+function GroupEdit ({match})
 {
+    const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
     const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
     const [group, setGroup] = useState ({name: ""});
+    const [roles, setRoles] = useState ([]);
     const [update, setUpdate] = useState (0);
 
     useEffect
@@ -30,19 +33,28 @@ function UserEdit ({match})
                             _id
                         }
                     }
-                )
-                if (response.data !== null)
+                );
+                setGroup (response.data);
+                if (response.data.hasOwnProperty ("content"))
                 {
-                    setGroup (response.data);
+                    for (var k = 0; k < response.data.roles.length; k++)
+                    {
+                        for (var j = 0; j < allRoles.length; j++)
+                        {
+                            if (response.data.roles[k] == allRoles[j]._id)
+                            {
+                                var tempRoles = roles;
+                                tempRoles.push (allRoles[j]);
+                                setRoles (tempRoles);
+                            }
+                        }
+                    }
                 }
-                else
-                {
-                    setUpdate (update+1);
-                }
+                setUpdate (update+1);
             }
             runEffect();
         },
-        [update]
+        [match.params.id]
     )
 
     function handleChangeName (e)
@@ -50,6 +62,51 @@ function UserEdit ({match})
         var newGroup = Object.assign ({}, group);
         newGroup.name = e.target.value;
         setGroup (newGroup);
+    }
+
+    function handleChangeRole (index, e)
+    {
+        const values = [...group.roles];
+        values[index] = e.target.options[e.target.selectedIndex].id;
+        var newGroup = Object.assign ({}, group);
+        newGroup.roles = values;
+        setGroup (newGroup);
+        const newRoles = roles;
+        allRoles.map
+        (
+            (role) =>
+            {
+                if (role._id == e.target.options[e.target.selectedIndex].id)
+                {
+                    newRoles[index] = role;
+                }
+            }
+        )
+        setRoles (newRoles);
+    }
+
+    function handleAddRole ()
+    {
+        const values = [...group.roles];
+        values.push (allRoles[0]);
+        var newGroup = Object.assign ({}, group);
+        newGroup.roles = values;
+        setGroup (newGroup);
+        const newRoles = roles;
+        newRoles.push (allRoles[0]);
+        setRoles (newRoles);
+    }
+
+    function handleRemoveRole (index)
+    {
+        const values = [...group.roles];
+        values.splice (index, 1);
+        var newGroup = Object.assign ({}, group);
+        newGroup.roles = values;
+        setGroup (newGroup);
+        const newRoles = roles;
+        newRoles.splice (index, 1);
+        setRoles (newRoles);
     }
 
     async function handleSubmit (e)
@@ -61,11 +118,13 @@ function UserEdit ({match})
                 e.preventDefault ();
                 const _id = group._id;
                 const name = group.name;
+                const roles = group.roles;
                 const response = await api.put
                 (
                     "/groupidupdatesimp",
                     {
-                        name
+                        name,
+                        roles
                     },
                     {
                         params:
@@ -111,6 +170,71 @@ function UserEdit ({match})
         }
     }
 
+    function OtherAttributes ()
+    {
+        if (group !== null && group !== undefined && group.hasOwnProperty ("content") && group.hasOwnProperty ("roles"))
+        {
+            return (
+                <div>
+                {
+                    roles.map
+                    (
+                        (role, index) =>
+                        {
+                            return (
+                                <div className = "singleRole" key = {index}>
+                                    <label htmlFor = "role">Papel {index+1}</label>
+                                    <select
+                                    className = "roleSelect"
+                                    value = {role.name}
+                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    >
+                                        {
+                                            allRoles.map
+                                            (
+                                                (optionRole, optionIndex) =>
+                                                {
+                                                    return (
+                                                        <option
+                                                        id = {optionRole._id}
+                                                        key = {optionIndex}
+                                                        value = {optionRole.name}
+                                                        >
+                                                            {optionRole.name}
+                                                        </option>
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    </select>
+                                    <button
+                                    className = "buttonRoleRemove"
+                                    type = "button"
+                                    onClick = {() => handleRemoveRole (index)}
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            );
+                        }
+                    )
+                }
+                <button
+                className = "buttonRoleAdd"
+                type = "button"
+                onClick = {() => handleAddRole ()}
+                >
+                    Adicionar papel
+                </button>
+                </div>
+            )
+        }
+        else
+        {
+            return <div/>
+        }
+    }
+
     return (
         <div className = "groupEditArea">
             <form id = "groupEdit">
@@ -126,6 +250,7 @@ function UserEdit ({match})
                         required
                     />
                 </div>
+                <OtherAttributes/>
                 <Link to = {match.url.replace ("edit", "")}>
                     <button
                     className = "buttonSubmit"
@@ -140,4 +265,4 @@ function UserEdit ({match})
     )
 }
 
-export default UserEdit;
+export default GroupEdit;

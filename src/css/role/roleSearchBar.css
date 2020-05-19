@@ -1,4 +1,4 @@
-.userSearchBarArea
+.roleSearchBarArea
 {
     display: grid;
     grid-template-columns: 1fr 0fr;
@@ -6,14 +6,14 @@
     margin-bottom: 10px;
 }
 
-.userSearchBarArea .nameInputGroup
+.roleSearchBarArea .nameInputGroup
 {
     display: grid;
     grid-template-columns: 0fr 1fr 0fr;
     padding-bottom: 10px;
 }
 
-.userSearchBarArea label
+.roleSearchBarArea label
 {
     width: 50px;
     height: 30px;
@@ -27,7 +27,7 @@
     align-items: center !important;
 }
 
-.userSearchBarArea input
+.roleSearchBarArea input
 {
     height: 30px;
     font-size: 12px;
@@ -39,13 +39,13 @@
     margin-left: 10px;
 }
 
-.userSearchBarArea ::placeholder
+.roleSearchBarArea ::placeholder
 {
     opacity: 1;
     color: #cccccc;
 }
 
-.userSearchBarArea button
+.roleSearchBarArea button
 {
     height: 30px;
     width: 100px;
@@ -62,20 +62,20 @@
     text-align: left;
 }
 
-.userSearchBarArea .buttonAdd
+.roleSearchBarArea .buttonAdd
 {
     border-color: #51cc51;
     color: #51cc51;
     margin-left: 10px;
 }
 
-.userSearchBarArea .buttonAdd:hover
+.roleSearchBarArea .buttonAdd:hover
 {
     background-color: #51cc51;
     color: #ffffff;
 }
 
-.userSearchBarArea button:hover
+.roleSearchBarArea button:hover
 {
     color: #ffffff;
     background-color: #51a3cc;

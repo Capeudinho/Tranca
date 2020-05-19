@@ -1,20 +1,30 @@
-.userAddArea .nameInputGroup, .emailInputGroup
+.roleAddArea .nameInputGroup
 {
     display: grid;
     grid-template-columns: 0fr 1fr;
     padding-bottom: 10px;
 }
 
-.userAddArea .singleMAC, .singleRole
+.roleAddArea .hourInputGroup
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr 0fr 0fr 1fr;
+    padding-bottom: 10px;
+}
+
+.roleAddArea .space
+{
+    width: 10px;
+}
+
+.roleAddArea .dayInputGroup
 {
     display: grid;
     grid-template-columns: 0fr 1fr 0fr;
-    padding-bottom: 10px; 
-    height: 30px;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
 }
 
-.userAddArea .roleSelect
+.roleAddArea .daySelect
 {
     border-color: #cccccc;
     margin-right: 10px;
@@ -22,7 +32,7 @@
     padding-right: 5px;
 }
 
-.userAddArea label
+.roleAddArea label
 {
     width: 50px;
     height: 30px;
@@ -36,7 +46,7 @@
     align-items: center !important;
 }
 
-.userAddArea input
+.roleAddArea input
 {
     height: 30px;
     font-size: 12px;
@@ -46,25 +56,13 @@
     border-color: #cccccc;
 }
 
-.userAddArea .MACInput
-{
-    margin-right: 10px;
-}
-
-.userAddArea .buttonsMain
-{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 10px;
-}
-
-.userAddArea ::placeholder
+.roleAddArea ::placeholder
 {
     opacity: 1;
     color: #cccccc;
 }
 
-.userAddArea button
+.roleAddArea button
 {
     height: 30px;
     width: 100%;
@@ -79,33 +77,40 @@
     padding-left: 10px;
 }
 
-.userAddArea .buttonSubmit
+.roleAddArea .buttonSubmit
 {
     color: #51cc51;
     border-color: #51cc51;
-    margin-top: 10px;
 }
 
-.userAddArea .buttonMACAdd, .buttonMACRemove, .buttonRoleAdd, .buttonRoleRemove
+.roleAddArea .buttonTimeAdd, .buttonTimeRemove
 {
     color: #cccccc;
     border-color: #cccccc;
 }
 
-.userAddArea .buttonMACRemove, .buttonRoleRemove
+.roleAddArea .buttonTimeRemove
 {
     text-align: left;
     padding-left: 10px;
     padding-right: 10px;
 }
 
-.userAddArea .buttonSubmit:hover
+.roleAddArea .buttonTimeAdd
+{
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+.roleAddArea .buttonSubmit:hover
 {
     color: #ffffff;
     background-color: #51cc51;
 }
 
-.userAddArea .buttonMACAdd:hover, .buttonMACRemove:hover, .buttonRoleAdd:hover, .buttonRoleRemove:hover
+.roleAddArea .buttonTimeAdd:hover, .buttonTimeRemove:hover
 {
     color: #ffffff;
     background-color: #cccccc;

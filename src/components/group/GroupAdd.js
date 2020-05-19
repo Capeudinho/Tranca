@@ -1,19 +1,53 @@
 import React, {useState, useContext} from "react";
 import api from "../../services/api";
 
+import allRolesContext from "../context/allRolesContext";
 import addedGroupContext from "../context/addedGroupContext";
 
 import "../../css/group/groupAdd.css";
 
 function GroupAdd ({match})
 {
+    const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {addedGroup, setAddedGroup} = useContext (addedGroupContext);
     const [name, setName] = useState ("");
+    const [roles, setRoles] = useState ([]);
     
     function handleChangeName (e)
     {
         const value = e.target.value;
         setName (value);
+    }
+
+    function handleChangeRole (index, e)
+    {
+        const newRoles = [...roles];
+        allRoles.map
+        (
+            (role) =>
+            {
+                if (role._id == e.target.options[e.target.selectedIndex].id)
+                {
+                    newRoles[index] = role;
+                }
+            }
+        )
+        setRoles (newRoles);
+    }
+
+    function handleAddRole ()
+    {
+        const newRoles = [...roles];
+        newRoles.push (allRoles[0]);
+        setRoles (newRoles);
+    }
+
+    function handleRemoveRole (index)
+    {
+        
+        const newRoles = [...roles];
+        newRoles.splice (index, 1);
+        setRoles (newRoles);
     }
 
     async function handleSubmit (e)
@@ -25,6 +59,7 @@ function GroupAdd ({match})
             "/groupstore",
             {
                 name,
+                roles,
                 _id
             }
         );
@@ -55,12 +90,64 @@ function GroupAdd ({match})
                         required
                     />
                 </div>
+                <div className = "roleInputGroup">
+                {
+                    roles.map
+                    (
+                        (role, index) =>
+                        {
+                            return (
+                                <div className = "singleRole" key = {index}>
+                                    <label htmlFor = "role">Papel {index+1}</label>
+                                    <select
+                                    className = "roleSelect"
+                                    value = {role.name}
+                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    >
+                                        {
+                                            allRoles.map
+                                            (
+                                                (optionRole, optionIndex) =>
+                                                {
+                                                    return (
+                                                        <option
+                                                        id = {optionRole._id}
+                                                        key = {optionIndex}
+                                                        value = {optionRole.name}
+                                                        >
+                                                            {optionRole.name}
+                                                        </option>
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    </select>
+                                    <button
+                                    className = "buttonRoleRemove"
+                                    type = "button"
+                                    onClick = {() => handleRemoveRole (index)}
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            );
+                        }
+                    )
+                }
+                </div>
+                <button
+                className = "buttonRoleAdd"
+                type = "button"
+                onClick = {() => handleAddRole ()}
+                >
+                    Adicionar papel
+                </button>
                 <button
                 className = "buttonSubmit"
                 type = "submit"
                 onClick = {(e) => handleSubmit (e)}
                 >
-                    Criar
+                    Criar grupo
                 </button>
             </form>
         </div>

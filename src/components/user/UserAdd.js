@@ -1,13 +1,19 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import api from "../../services/api";
+
+import allRolesContext from "../context/allRolesContext";
+import addedUserContext from "../context/addedUserContext";
 
 import "../../css/user/userAdd.css";
 
 function UserAdd ()
 {
+    const {allRoles, setAllRoles} = useContext (allRolesContext);
+    const {addedUser, setAddedUser} = useContext (addedUserContext);
     const [name, setName] = useState ("");
     const [email, setEmail] = useState ("");
     const [MACs, setMACs] = useState ([]);
+    const [roles, setRoles] = useState ([]);
 
     function handleChangeName (e)
     {
@@ -42,6 +48,37 @@ function UserAdd ()
         setMACs (values);
     }
 
+    function handleChangeRole (index, e)
+    {
+        const newRoles = [...roles];
+        allRoles.map
+        (
+            (role) =>
+            {
+                if (role._id == e.target.options[e.target.selectedIndex].id)
+                {
+                    newRoles[index] = role;
+                }
+            }
+        )
+        setRoles (newRoles);
+    }
+
+    function handleAddRole ()
+    {
+        const newRoles = [...roles];
+        newRoles.push (allRoles[0]);
+        setRoles (newRoles);
+    }
+
+    function handleRemoveRole (index)
+    {
+        
+        const newRoles = [...roles];
+        newRoles.splice (index, 1);
+        setRoles (newRoles);
+    }
+
     async function handleSubmit (e)
     {
         e.preventDefault ();
@@ -51,16 +88,18 @@ function UserAdd ()
             {
                 name,
                 email,
-                MACs
+                MACs,
+                roles
             }
         );
         if (response.data === "")
         {
-            window.alert("Já existe um usuário com esse nome.")
+            window.alert ("Já existe um usuário com esse nome.");
         }
         else
         {
-            window.alert(`O usuário ${name} foi criado.`)
+            window.alert (`O usuário ${name} foi criado.`);
+            setAddedUser (response.data);
             document.getElementById ("userAdd").reset();
         }
     }
@@ -119,6 +158,49 @@ function UserAdd ()
                         }
                     )
                 }
+                {
+                    roles.map
+                    (
+                        (role, index) =>
+                        {
+                            return (
+                                <div className = "singleRole" key = {index}>
+                                    <label htmlFor = "role">Papel {index+1}</label>
+                                    <select
+                                    className = "roleSelect"
+                                    value = {role.name}
+                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    >
+                                        {
+                                            allRoles.map
+                                            (
+                                                (optionRole, optionIndex) =>
+                                                {
+                                                    return (
+                                                        <option
+                                                        id = {optionRole._id}
+                                                        key = {optionIndex}
+                                                        value = {optionRole.name}
+                                                        >
+                                                            {optionRole.name}
+                                                        </option>
+                                                    )
+                                                }
+                                            )
+                                        }
+                                    </select>
+                                    <button
+                                    className = "buttonRoleRemove"
+                                    type = "button"
+                                    onClick = {() => handleRemoveRole (index)}
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            );
+                        }
+                    )
+                }
                 <div className = "buttonsMain">
                     <button
                     className = "buttonMACAdd"
@@ -128,13 +210,20 @@ function UserAdd ()
                         Adicionar MAC
                     </button>
                     <button
-                    className = "buttonSubmit"
-                    type = "submit"
-                    onClick = {(e) => handleSubmit (e)}
+                    className = "buttonRoleAdd"
+                    type = "button"
+                    onClick = {() => handleAddRole ()}
                     >
-                        Criar
+                        Adicionar papel
                     </button>
                 </div>
+                <button
+                className = "buttonSubmit"
+                type = "submit"
+                onClick = {(e) => handleSubmit (e)}
+                >
+                    Criar usuário
+                </button>
             </form>
         </div>
     )

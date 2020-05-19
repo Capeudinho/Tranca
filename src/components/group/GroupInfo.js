@@ -115,20 +115,26 @@ function GroupInfo ({match})
         }
     }
 
-    var groupType;
-    if (group.hasOwnProperty ("content"))
+    function TypeAttributes ()
     {
-        groupType = <div className = "type">Grupo</div>
-    }
-    else
-    {
-        groupType = <div className = "type">Tranca</div>
+        if (group.hasOwnProperty ("content"))
+        {
+            return (
+                <div className = "type">Grupo</div>
+            )
+        }
+        else
+        {
+            return (
+                <div className = "type">Tranca</div>
+            )
+        }
     }
 
     return (
         <div className = "groupInfoArea">
             <div className = "name">{group.name}</div>
-            <div>{groupType}</div>
+            <TypeAttributes/>
             <Link to = {match.url.concat ("/edit")}>
                 <button
                 className = "buttonEdit"

@@ -21,13 +21,11 @@ function BaseLeft ()
                 <Link to = "/listusers">
                     <button className = "buttonList">Usuários</button>
                 </Link>
-                <Link to = "/adduser">
-                    <button className = "buttonAdd">+</button>
-                </Link>
             </div>
             <div className = "area areaRoles">
-                <button className = "buttonList">Funções</button>
-                <button className = "buttonAdd">+</button>
+                <Link to = "/listroles">
+                    <button className = "buttonList">Funções</button>
+                </Link>
             </div>
             <div className = "area areaMenu">
                 <button className = "buttonList buttonListMenu">Menu</button>

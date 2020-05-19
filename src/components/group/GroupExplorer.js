@@ -52,70 +52,73 @@ function GroupExplorer (props)
     (
         () =>
         {
-            var newGroups = groups;
-            for (var k = 0; k < groups.length; k++)
+            if (deletedGroups.hasOwnProperty ("group"))
             {
-                var goBack = false;
-                if (k < groups.length && groups[k]._id === deletedGroups.group._id)
+                var newGroups = groups;
+                for (var k = 0; k < groups.length; k++)
                 {
-                    newGroups.splice (k, 1);
-                    goBack = true;
-                }
-                else if (k < groups.length && groups[k]._id === deletedGroups.newContentGroup._id)
-                {
-                    newGroups[k] = deletedGroups.newContentGroup;
-                }
-                for (var j = 0; j < deletedGroups.otherGroups.length; j++)
-                {
-                    if (j < deletedGroups.otherGroups.length && deletedGroups.otherGroups[j]._id === groups[k]._id)
+                    var goBack = false;
+                    if (k < groups.length && groups[k]._id === deletedGroups.group._id)
                     {
                         newGroups.splice (k, 1);
                         goBack = true;
                     }
-                }
-                for (var i = 0; i < deletedGroups.otherLocks.length; i++)
-                {
-                    if (k < groups.length && i < deletedGroups.otherLocks.length && deletedGroups.otherLocks[i]._id === groups[k]._id)
+                    else if (k < groups.length && groups[k]._id === deletedGroups.newContentGroup._id)
                     {
-                        newGroups.splice (k, 1);
-                        setUpdate (update+1);
-                        goBack = true;
+                        newGroups[k] = deletedGroups.newContentGroup;
+                    }
+                    for (var j = 0; j < deletedGroups.otherGroups.length; j++)
+                    {
+                        if (j < deletedGroups.otherGroups.length && deletedGroups.otherGroups[j]._id === groups[k]._id)
+                        {
+                            newGroups.splice (k, 1);
+                            goBack = true;
+                        }
+                    }
+                    for (var i = 0; i < deletedGroups.otherLocks.length; i++)
+                    {
+                        if (k < groups.length && i < deletedGroups.otherLocks.length && deletedGroups.otherLocks[i]._id === groups[k]._id)
+                        {
+                            newGroups.splice (k, 1);
+                            setUpdate (update+1);
+                            goBack = true;
+                        }
+                    }
+                    if (goBack === true)
+                    {
+                        k--;
                     }
                 }
-                if (goBack === true)
+                var newExpandedGroups = expandedGroups;
+                for (var h = 0; h < expandedGroups.length; h++)
                 {
-                    k--;
-                }
-            }
-            var newExpandedGroups = expandedGroups;
-            for (var h = 0; h < expandedGroups.length; h++)
-            {
-                var goBack = false;
-                if (h < expandedGroups.length && expandedGroups[h]._id === deletedGroups.group._id)
-                {
-                    newGroups.splice (h, 1);
-                    goBack = true;
-                }
-                else if (h < expandedGroups.length && expandedGroups[h]._id === deletedGroups.newContentGroup._id)
-                {
-                    newGroups[h] = deletedGroups.newContentGroup;
-                }
-                for (var f = 0; f < deletedGroups.otherGroups.length; f++)
-                {
-                    if (f < deletedGroups.otherGroups.length && deletedGroups.otherGroups[f]._id === expandedGroups[h]._id)
+                    var goBack = false;
+                    if (h < expandedGroups.length && expandedGroups[h]._id === deletedGroups.group._id)
                     {
-                        newGroups.splice (h, 1);
+                        newExpandedGroups.splice (h, 1);
                         goBack = true;
                     }
+                    else if (h < expandedGroups.length && expandedGroups[h]._id === deletedGroups.newContentGroup._id)
+                    {
+                        newExpandedGroups[h] = deletedGroups.newContentGroup;
+                    }
+                    for (var f = 0; f < deletedGroups.otherGroups.length; f++)
+                    {
+                        if (h < expandedGroups.length && f < deletedGroups.otherGroups.length && deletedGroups.otherGroups[f]._id === expandedGroups[h]._id)
+                        {
+                            newExpandedGroups.splice (h, 1);
+                            goBack = true;
+                        }
+                    }
+                    if (goBack === true)
+                    {
+                        h--;
+                    }
                 }
-                if (goBack === true)
-                {
-                    h--;
-                }
+                setExpandedGroups (newExpandedGroups);
+                setGroups (newGroups);
+                setUpdate (update+1);
             }
-            setExpandedGroups (newExpandedGroups);
-            setGroups (newGroups);
-            setUpdate (update+1);
         },
         [deletedGroups]
     )
@@ -124,19 +127,22 @@ function GroupExplorer (props)
     (
         () =>
         {
-            groups.map
-            (
-                (group, index) =>
-                {
-                    if (group._id === updatedGroup._id)
+            if (updatedGroup.hasOwnProperty ("_id"))
+            {
+                groups.map
+                (
+                    (group, index) =>
                     {
-                        var tempGroup = groups;
-                        tempGroup[index] = updatedGroup;
-                        setGroups (tempGroup);
-                        setUpdate (update+1);
+                        if (group._id === updatedGroup._id)
+                        {
+                            var tempGroup = groups;
+                            tempGroup[index] = updatedGroup;
+                            setGroups (tempGroup);
+                            setUpdate (update+1);
+                        }
                     }
-                }
-            )
+                )
+            }
         },
         [updatedGroup]
     )
@@ -193,22 +199,25 @@ function GroupExplorer (props)
     (
         () =>
         {
-            var newGroups = groups;
-            for (var k = 0; k < groups.length; k++)
+            if (deletedLock.hasOwnProperty ("lock"))
             {
-                if (groups[k]._id === deletedLock.lock._id)
+                var newGroups = groups;
+                for (var k = 0; k < groups.length; k++)
                 {
-                    newGroups.splice (k, 1);
-                    k--;
+                    if (groups[k]._id === deletedLock.lock._id)
+                    {
+                        newGroups.splice (k, 1);
+                        k--;
+                    }
+                    else if (groups[k]._id === deletedLock.newContentGroup._id)
+                    {
+                        newGroups[k] = deletedLock.newContentGroup;
+                        k--;
+                    }
                 }
-                else if (groups[k]._id === deletedLock.newContentGroup._id)
-                {
-                    newGroups[k] = deletedLock.newContentGroup;
-                    k--;
-                }
+                setGroups (newGroups);
+                setUpdate (update+1);
             }
-            setGroups (newGroups);
-            setUpdate (update+1);
         },
         [deletedLock]
     )
@@ -217,19 +226,22 @@ function GroupExplorer (props)
     (
         () =>
         {
-            groups.map
-            (
-                (group, index) =>
-                {
-                    if (group._id === updatedLock._id)
+            if (updatedLock.hasOwnProperty ("_id"))
+            {
+                groups.map
+                (
+                    (group, index) =>
                     {
-                        var tempGroup = groups;
-                        tempGroup[index] = updatedLock;
-                        setGroups (tempGroup);
-                        setUpdate (update+1);
+                        if (group._id === updatedLock._id)
+                        {
+                            var tempGroup = groups;
+                            tempGroup[index] = updatedLock;
+                            setGroups (tempGroup);
+                            setUpdate (update+1);
+                        }
                     }
-                }
-            )
+                )
+            }
         },
         [updatedLock]
     )
@@ -308,22 +320,24 @@ function GroupExplorer (props)
         const tempExpandedGroups = expandedGroups;
         tempExpandedGroups.push (group);
         setExpandedGroups (tempExpandedGroups);
-        for (var k = 0; k < group.content.length; k++)
-        {
-            const _id = group.content[k];
-            const response = await api.get
-            (
-                "/groupidindex",
+        const content = group.content;
+        const response = await api.get
+        (
+            "/groupcontentindex",
+            {
+                params:
                 {
-                    params:
-                    {
-                        _id
-                    }
+                    content
                 }
-            );
-            setGroups (groups.splice (index+1+k, 0, response.data));
-            setGroups (groups);
+            }
+        );
+        var newGroups = groups;
+        for (var k = response.data.length-1; k >= 0; k--)
+        {
+            newGroups.splice (index+1, 0, response.data[k])
         }
+        setGroups (newGroups);
+        setUpdate (update+1);
     }
 
     function handleContract (group)

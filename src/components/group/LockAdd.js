@@ -60,7 +60,7 @@ function LockAdd ({match})
                 type = "submit"
                 onClick = {(e) => handleSubmit (e)}
                 >
-                    Criar
+                    Criar tranca
                 </button>
             </form>
         </div>

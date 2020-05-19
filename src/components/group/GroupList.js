@@ -63,46 +63,52 @@ function GroupList ({match})
     (
         () =>
         {
-            var newGroups = groups;
-            for (var k = 0; k < groups.length; k++)
+            if (deletedGroups.hasOwnProperty ("group"))
             {
-                var goBack = false;
-                if (k < groups.length && groups[k]._id === deletedGroups.group._id)
+                var newGroups = groups;
+                for (var k = 0; k < groups.length; k++)
                 {
-                    newGroups.splice (k, 1);
-                    setUpdate (update+1);
-                    goBack = true;
-                }
-                else if (k < groups.length && groups[k]._id === deletedGroups.newContentGroup._id)
-                {
-                    newGroups[k] = deletedGroups.newContentGroup;
-                }
-                for (var j = 0; j < deletedGroups.otherGroups.length; j++)
-                {
-                    if (k < groups.length && j < deletedGroups.otherGroups.length && deletedGroups.otherGroups[j]._id === groups[k]._id)
+                    var goBack = false;
+                    if (k < groups.length && groups[k]._id === deletedGroups.group._id)
                     {
                         newGroups.splice (k, 1);
                         setUpdate (update+1);
                         goBack = true;
                     }
-                }
-                for (var i = 0; i < deletedGroups.otherLocks.length; i++)
-                {
-                    console.log (groups.length);
-                    console.log (k);
-                    if (k < groups.length && i < deletedGroups.otherLocks.length && deletedGroups.otherLocks[i]._id === groups[k]._id)
+                    else if (k < groups.length && groups[k]._id === deletedGroups.newContentGroup._id)
                     {
-                        newGroups.splice (k, 1);
-                        setUpdate (update+1);
-                        goBack = true;
+                        newGroups[k] = deletedGroups.newContentGroup;
                     }
+                    for (var j = 0; j < deletedGroups.otherGroups.length; j++)
+                    {
+                        if (k < groups.length && j < deletedGroups.otherGroups.length && deletedGroups.otherGroups[j]._id === groups[k]._id)
+                        {
+                            newGroups.splice (k, 1);
+                            setUpdate (update+1);
+                            goBack = true;
+                        }
+                        console.log ("Epa");
+                    }
+                    for (var i = 0; i < deletedGroups.otherLocks.length; i++)
+                    {
+                        console.log (groups.length);
+                        console.log (k);
+                        if (k < groups.length && i < deletedGroups.otherLocks.length && deletedGroups.otherLocks[i]._id === groups[k]._id)
+                        {
+                            newGroups.splice (k, 1);
+                            setUpdate (update+1);
+                            goBack = true;
+                        }
+                        console.log ("Epa");
+                    }
+                    if (goBack === true)
+                    {
+                        k--;
+                    }
+                    console.log ("Epa");
                 }
-                if (goBack === true)
-                {
-                    k--;
-                }
+                setGroups (newGroups);
             }
-            setGroups (newGroups);
         },
         [deletedGroups]
     )
@@ -111,19 +117,22 @@ function GroupList ({match})
     (
         () =>
         {
-            groups.map
-            (
-                (group, index) =>
-                {
-                    if (group._id === updatedGroup._id)
+            if (updatedGroup.hasOwnProperty ("_id"))
+            {
+                groups.map
+                (
+                    (group, index) =>
                     {
-                        var tempGroup = groups;
-                        tempGroup[index] = updatedGroup;
-                        setGroups (tempGroup);
-                        setUpdate (update+1);
+                        if (group._id === updatedGroup._id)
+                        {
+                            var tempGroup = groups;
+                            tempGroup[index] = updatedGroup;
+                            setGroups (tempGroup);
+                            setUpdate (update+1);
+                        }
                     }
-                }
-            )
+                )
+            }
         },
         [updatedGroup]
     )
@@ -147,21 +156,24 @@ function GroupList ({match})
     (
         () =>
         {
-            var newGroups = groups;
-            for (var k = 0; k < groups.length; k++)
+            if (deletedLock.hasOwnProperty ("lock"))
             {
-                if (k < groups.length && groups[k]._id === deletedLock.lock._id)
+                var newGroups = groups;
+                for (var k = 0; k < groups.length; k++)
                 {
-                    newGroups.splice (k, 1);
-                    setUpdate (update+1);
-                    k--;
+                    if (k < groups.length && groups[k]._id === deletedLock.lock._id)
+                    {
+                        newGroups.splice (k, 1);
+                        setUpdate (update+1);
+                        k--;
+                    }
+                    else if (groups[k]._id === deletedLock.newContentGroup._id)
+                    {
+                        newGroups[k] = deletedLock.newContentGroup;
+                    }
                 }
-                else if (groups[k]._id === deletedLock.newContentGroup._id)
-                {
-                    newGroups[k] = deletedLock.newContentGroup;
-                }
+                setGroups (newGroups);
             }
-            setGroups (newGroups);
         },
         [deletedLock]
     )
@@ -170,19 +182,22 @@ function GroupList ({match})
     (
         () =>
         {
-            groups.map
-            (
-                (group, index) =>
-                {
-                    if (group._id === updatedLock._id)
+            if (updatedLock.hasOwnProperty ("_id"))
+            {
+                groups.map
+                (
+                    (group, index) =>
                     {
-                        var tempGroup = groups;
-                        tempGroup[index] = updatedLock;
-                        setGroups (tempGroup);
-                        setUpdate (update+1);
+                        if (group._id === updatedLock._id)
+                        {
+                            var tempGroup = groups;
+                            tempGroup[index] = updatedLock;
+                            setGroups (tempGroup);
+                            setUpdate (update+1);
+                        }
                     }
-                }
-            )
+                )
+            }
         },
         [updatedLock]
     )

@@ -12,26 +12,16 @@ function UserInfo ({match})
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const [user, setUser] = useState ({});
-    const [_id, set_id] = useState ("");
+    const [update, setUpdate] = useState (0);
 
 
     useEffect
     (
         () =>
         {
-            if (user.hasOwnProperty ("_id") === false)
-            {
-                set_id (match.params.id);
-            }
-            else
-            {
-                if (user._id !== match.params.id)
-                {
-                    set_id (match.params.id);
-                }
-            }
             const runEffect = async () =>
             {
+                const _id = match.params.id;
                 const response = await api.get
                 (
                     "/useridindex",
@@ -41,21 +31,13 @@ function UserInfo ({match})
                             _id
                         }
                     }
-                )
-                if (user.hasOwnProperty ("name") === false)
-                {
-                    setUser (response.data);
-                }
-                else
-                {
-                    if (user.name !== response.data.name)
-                    {
-                        setUser (response.data);
-                    }
-                }
+                );
+                setUser (response.data);
+                setUpdate (update+1);
             }
             runEffect();
-        }
+        },
+        [match]
     );
 
     useEffect
@@ -92,10 +74,26 @@ function UserInfo ({match})
         }
     }
 
+    function OtherAttributes ()
+    {
+        if (user !== null && user !== undefined && user.hasOwnProperty ("name") && user.hasOwnProperty ("email"))
+        {
+            return (
+                <div>
+                    <div className = "name">{user.name}</div>
+                    <div className = "email">{user.email}</div>
+                </div>
+            )
+        }
+        else
+        {
+            return <div/>
+        }
+    }
+
     return (
         <div className = "userInfoArea">
-            <div className = "name">{user.name}</div>
-            <div className = "email">{user.email}</div>
+            <OtherAttributes/>
             <Link to = {match.url.concat ("/edit")}>
                 <button
                 className = "buttonEdit"
