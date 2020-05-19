@@ -2,6 +2,7 @@ const {Router} = require ("express");
 const UserController = require ("./controllers/UserController");
 const GroupController = require ("./controllers/GroupController");
 const LockController = require ("./controllers/LockController");
+const RoleController = require ("./controllers/RoleController");
 
 const routes = Router ();
 
@@ -28,5 +29,13 @@ routes.post ("/lockstore", LockController.store);
 routes.put ("/lockidupdate", LockController.idupdate);
 routes.put ("/lockidupdatesimp", LockController.idupdatesimp);
 routes.delete ("/lockiddestroy", LockController.iddestroy);
+
+routes.get ("/rolelist", RoleController.list);
+routes.get ("/rolelistpag", RoleController.listpag);
+routes.get ("/rolenamelistpag", RoleController.namelistpag);
+routes.get ("/roleidindex", RoleController.idindex);
+routes.post ("/rolestore", RoleController.store);
+routes.put ("/roleidupdate", RoleController.idupdate);
+routes.delete ("/roleiddestroy", RoleController.iddestroy);
 
 module.exports = routes;

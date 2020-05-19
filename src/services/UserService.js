@@ -31,11 +31,11 @@ module.exports =
 
     async store (request, response)
     {
-        const {name = "", email = "", MACs = []} = request.body;
+        const {name = "", email = "", MACs = [], roles = []} = request.body;
         const user = await User.findOne ({name});
         if (user === null)
         {
-            var newUser = await User.create ({name, email, MACs});
+            var newUser = await User.create ({name, email, MACs, roles});
         }
         return response.json (newUser);
     },
@@ -43,8 +43,8 @@ module.exports =
     async idupdate (request, response)
     {
         const {_id} = request.query;
-        const {name = "", email = "", MACs = []} = request.body;
-        const user = await User.findByIdAndUpdate (_id, {name, email, MACs}, {new: true});
+        const {name = "", email = "", MACs = [], roles = []} = request.body;
+        const user = await User.findByIdAndUpdate (_id, {name, email, MACs, roles}, {new: true});
         return response.json (user);
     },
 

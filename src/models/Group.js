@@ -4,9 +4,9 @@ const GroupSchema = new mongoose.Schema
 (
     {
         name: String,
-        level: Number,
         holder: [String],
-        content: [String]
+        content: [String],
+        roles: [String]
     }
 );
 

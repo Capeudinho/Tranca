@@ -16,8 +16,6 @@ module.exports =
         const lock = await Lock.findById (_id);
         if (group === null && lock !== null)
         {return response.json (lock);}
-        else if (group !== null && lock === null)
-        {return response.json (group);}
         else
         {return response.json (group);}
     },
@@ -40,7 +38,7 @@ module.exports =
 
     async store (request, response)
     {
-        const {name = "", _id = ""} = request.body;
+        const {name = "", roles = [], _id = ""} = request.body;
         const holderGroup = await Group.findById (_id);
         var newHolder = holderGroup.holder;
         newHolder.push (holderGroup._id);
@@ -52,8 +50,8 @@ module.exports =
                 {
                     name,
                     holder: newHolder,
-                    level: 1,
-                    content: []
+                    content: [],
+                    roles
                 }
             );
             var newContent = holderGroup.content;
@@ -75,16 +73,16 @@ module.exports =
     async idupdate (request, response)
     {
         const {_id} = request.query;
-        const {name = "", holder = "", level = 0, content = []} = request.body;
-        const group = await Group.findByIdAndUpdate (_id, {name, holder, level, content}, {new: true});
+        const {name = "", holder = "", content = [], roles = []} = request.body;
+        const group = await Group.findByIdAndUpdate (_id, {name, holder, content, roles}, {new: true});
         return response.json (group);
     },
 
     async idupdatesimp (request, response)
     {
         const {_id} = request.query;
-        const {name = ""} = request.body;
-        const group = await Group.findByIdAndUpdate (_id, {name}, {new: true});
+        const {name = "", roles = []} = request.body;
+        const group = await Group.findByIdAndUpdate (_id, {name, roles}, {new: true});
         return response.json (group);
     },
 
