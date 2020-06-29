@@ -6,7 +6,8 @@ const GroupSchema = new mongoose.Schema
         name: String,
         holder: [String],
         content: [String],
-        roles: [String]
+        roles: [String],
+        owner: String
     }
 );
 

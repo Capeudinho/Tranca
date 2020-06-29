@@ -5,8 +5,7 @@ const CentralSchema = new mongoose.Schema
     {
         name: String,
         email: String,
-        password: String,
-        roles: [String]
+        password: String
     }
 );
 

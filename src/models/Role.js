@@ -10,9 +10,15 @@ const RoleSchema = new mongoose.Schema
             {
                 start: Number,
                 end: Number,
-                day: Number
+                day: [Boolean],
+                options:
+                {
+                    track: Boolean,
+                    direct: Boolean
+                }
             }
-        ]
+        ],
+        owner: String
     }
 );
 

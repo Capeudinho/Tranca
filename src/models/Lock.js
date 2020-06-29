@@ -4,7 +4,8 @@ const LockSchema = new mongoose.Schema
 (
     {
         name: String,
-        holder: [String]
+        holder: [String],
+        owner: String
     }
 );
 
