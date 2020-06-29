@@ -33,7 +33,96 @@
     background-color: #51a3cc;
 }
 
-.roleListArea .user
+.roleListArea .role
 {
     margin-bottom: 10px;
+}
+
+.roleListArea .searchBar
+{
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    border-bottom: solid 1px #cccccc;
+    margin-bottom: 10px;
+}
+
+.roleListArea .searchBar .nameInputGroup
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr 0fr;
+    padding-bottom: 10px;
+    margin-right: 10px;
+}
+
+.roleListArea .searchBar label
+{
+    width: 50px;
+    height: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+}
+
+.roleListArea .searchBar input
+{
+    height: 30px;
+    font-size: 12px;
+    padding-left: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.roleListArea .searchBar ::placeholder
+{
+    opacity: 1;
+    color: #cccccc;
+}
+
+.roleListArea .searchBar button
+{
+    height: 30px;
+    width: 100px;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    color: #51a3cc;
+    border-color: #51a3cc;
+    background-color: #ffffff;
+    cursor: pointer;
+    padding-left: 10px;
+    text-align: left;
+}
+
+.roleListArea .searchBar a
+{
+    width: 100px;
+    height: 30px;
+}
+
+.roleListArea .searchBar .buttonAdd
+{
+    border-color: #51cc51;
+    color: #51cc51;
+}
+
+.roleListArea .searchBar .buttonAdd:hover
+{
+    background-color: #51cc51;
+    color: #ffffff;
+}
+
+.roleListArea .searchBar button:hover
+{
+    color: #ffffff;
+    background-color: #51a3cc;
 }

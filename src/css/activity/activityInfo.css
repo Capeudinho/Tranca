@@ -1,0 +1,46 @@
+.logInfoArea .logData
+{
+    font-size: 12px;
+}
+
+.logInfoArea .logType
+{
+    font-size: 18px;
+    font-weight: bold;
+    color: #cccccc;
+    margin-bottom: 10px;
+}
+
+.logInfoArea .title
+{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.logInfoArea .inbetween
+{
+    margin-bottom: 10px;
+}
+
+.logInfoArea .logData
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-bottom: 10px;
+}
+
+.logInfoArea .left
+{
+    border-right: solid 1px #cccccc;
+}
+
+.logInfoArea .right
+{
+    margin-left: 10px;
+}
+
+.logInfoArea .role, .holder
+{
+    margin-bottom: 5px;
+}

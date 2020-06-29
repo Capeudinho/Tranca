@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import currentCentralContext from "../context/currentCentralContext";
 import deletedRoleContext from "../context/deletedRoleContext";
 import updatedRoleContext from "../context/updatedRoleContext";
 import addedRoleContext from "../context/addedRoleContext";
@@ -10,44 +11,46 @@ import "../../css/role/roleList.css";
 
 function RoleList ()
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {deletedRole, setDeletedRole} = useContext (deletedRoleContext);
     const {updatedRole, setUpdatedRole} = useContext (updatedRoleContext);
     const {addedRole, setAddedRole} = useContext (addedRoleContext);
     const [roles, setRoles] = useState ([]);
     const [page, setPage] = useState (1);
     const [pageLimit, setPageLimit] = useState (1);
+    const [name, setName] = useState ("");
+    const [update, setUpdate] = useState (0);
 
     useEffect
     (
         () =>
         {
-            setPage (page);
-        },
-        []
-    );
-
-    useEffect
-    (
-        () =>
-        {
+            let mounted = true;
             const runEffect = async () =>
             {
+                const owner = currentCentral._id;
                 const response = await api.get
                 (
                     "/rolelistpag",
                     {
                         params:
                         {
-                            page
+                            page,
+                            name,
+                            owner
                         }
                     }
                 );
-                setPageLimit (response.data.pages);
-                setRoles ([...roles, ...response.data.docs]);
+                if (mounted)
+                {
+                    setPageLimit (response.data.pages);
+                    setRoles ([...roles, ...response.data.docs]);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
-        [page]
+        [page, update]
     );
 
     useEffect
@@ -62,7 +65,9 @@ function RoleList ()
                     {
                         if (role._id === deletedRole._id)
                         {
-                            roles.splice (index, 1);
+                            var newRoles = [...roles];
+                            newRoles.splice (index, 1);
+                            setRoles (newRoles);
                         }
                     }
                 )
@@ -85,7 +90,7 @@ function RoleList ()
                         {
                             var newRoles = [...roles];
                             newRoles[index] = updatedRole;
-                            setRoles(newRoles);
+                            setRoles (newRoles);
                         }
                     }
                 )
@@ -108,16 +113,46 @@ function RoleList ()
         [addedRole]
     );
 
+    function handleChangeName (e)
+    {
+        const value = e.target.value;
+        setName (value);
+    }
+
+    function handleSubmit (e)
+    {
+        e.preventDefault ();
+        setPage (1);
+        setRoles ([]);
+        setUpdate (update+1);
+    }
+
     return (
         <div className = "roleListArea">
+            <div className = "searchBar">
+                <form className = "nameInputGroup">
+                    <label>Nome</label>
+                    <input
+                    value = {name}
+                    onChange = {(e) => handleChangeName (e)}
+                    placeholder = "Nome"
+                    />
+                    <button className = "buttonSearch" onClick = {(e) => handleSubmit (e)}>Pesquisar</button>
+                </form>
+                <Link to = "roles/addrole">
+                    <button className = "buttonAdd buttonAddRole">
+                        Papel
+                    </button>
+                </Link>
+            </div>
             {
                 roles.map
                 (
                     (role, index) =>
                     {
                         return (
-                            <div key = {index} className = "user">
-                                <Link key = {index} to = {`/listroles/${role._id}`}>
+                            <div key = {index} className = "role">
+                                <Link key = {index} to = {`/roles/${role._id}`}>
                                     <button
                                     className = "buttonUser"
                                     key = {index}>

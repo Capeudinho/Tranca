@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import updatedUserContext from "../context/updatedUserContext";
 
@@ -9,9 +10,18 @@ import "../../css/user/userEdit.css";
 
 function UserEdit ({match})
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
-    const [user, setUser] = useState ({});
+    const [user, setUser] = useState
+    (
+        {
+            name: "",
+            email: "",
+            MACs: [],
+            roles: []
+        }
+    );
     const [roles, setRoles] = useState ([]);
     const [update, setUpdate] = useState (0);
 
@@ -19,6 +29,7 @@ function UserEdit ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 var _id = match.params.id;
@@ -32,12 +43,11 @@ function UserEdit ({match})
                         }
                     }
                 );
-                setUser (response.data);
                 for (var k = 0; k < response.data.roles.length; k++)
                 {
                     for (var j = 0; j < allRoles.length; j++)
                     {
-                        if (response.data.roles[k] == allRoles[j]._id)
+                        if (response.data.roles[k] === allRoles[j]._id)
                         {
                             var tempRoles = roles;
                             tempRoles.push (allRoles[j]);
@@ -45,9 +55,14 @@ function UserEdit ({match})
                         }
                     }
                 }
-                setUpdate (update+1);
+                if (mounted)
+                {
+                    setUser (response.data);
+                    setUpdate (update+1);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match.params.id]
     )
@@ -105,7 +120,7 @@ function UserEdit ({match})
         (
             (role) =>
             {
-                if (role._id == e.target.options[e.target.selectedIndex].id)
+                if (role._id === e.target.options[e.target.selectedIndex].id)
                 {
                     newRoles[index] = role;
                 }
@@ -116,14 +131,21 @@ function UserEdit ({match})
 
     function handleAddRole ()
     {
-        const values = [...user.roles];
-        values.push (allRoles[0]);
-        var newUser = Object.assign ({}, user);
-        newUser.roles = values;
-        setUser (newUser);
-        const newRoles = roles;
-        newRoles.push (allRoles[0]);
-        setRoles (newRoles);
+        if (allRoles.length === 0)
+        {
+            window.alert ("Você não possui papéis criados.");
+        }
+        else
+        {
+            const values = [...user.roles];
+            values.push (allRoles[0]);
+            var newUser = Object.assign ({}, user);
+            newUser.roles = values;
+            setUser (newUser);
+            const newRoles = roles;
+            newRoles.push (allRoles[0]);
+            setRoles (newRoles);
+        }
     }
 
     function handleRemoveRole (index)
@@ -148,6 +170,7 @@ function UserEdit ({match})
             const email = user.email;
             const MACs = user.MACs;
             const roles = user.roles;
+            const owner = currentCentral._id;
             const response = await api.put
             (
                 "/useridupdate",
@@ -155,7 +178,8 @@ function UserEdit ({match})
                     name,
                     email,
                     MACs,
-                    roles
+                    roles,
+                    owner
                 },
                 {
                     params:
@@ -176,19 +200,40 @@ function UserEdit ({match})
         }
     }
 
-    function OtherAttributes ()
-    {
-        if (user !== null && user !== undefined && user.hasOwnProperty ("MACs") && user.hasOwnProperty ("roles"))
-        {
-            return (
-                <div>
+    return (
+        <div className = "userEditArea">
+            <form id = "userEdit">
+                <div className = "nameInputGroup">
+                    <label htmlFor = "name">Nome</label>
+                    <input
+                        form = "userEdit"
+                        placeholder = "Nome"
+                        className = "nameInput"
+                        value = {user.name}
+                        onChange = {(e) => handleChangeName (e)}
+                        pattern = "[A-Za-z0-9_]{3,} "
+                        required
+                    />
+                </div>
+                <div className = "emailInputGroup">
+                    <label htmlFor = "email">E-mail</label>
+                    <input
+                        form = "userEdit"
+                        placeholder = "E-mail"
+                        className = "emailInput"
+                        value = {user.email}
+                        onChange = {(e) => handleChangeEmail (e)}
+                        type = "email"
+                        required
+                   />
+                </div>
                 {
                     user.MACs.map
                     (
                         (MAC, index) =>
                         {
                             return (
-                                <div className = "singleMAC" key = {index}>
+                                <div className = "singleMAC" key = {"singleMAC"+index}>
                                     <label htmlFor = "MAC">MAC {index+1}</label>
                                     <input
                                         form = "userEdit"
@@ -215,7 +260,7 @@ function UserEdit ({match})
                         (role, index) =>
                         {
                             return (
-                                <div className = "singleRole" key = {index}>
+                                <div className = "singleRole" key = {"singleRole"+index}>
                                     <label htmlFor = "role">Papel {index+1}</label>
                                     <select
                                     className = "roleSelect"
@@ -252,43 +297,6 @@ function UserEdit ({match})
                         }
                     )
                 }
-                </div>
-            )
-        }
-        else
-        {
-            return <div/>
-        }
-    }
-
-    return (
-        <div className = "userEditArea">
-            <form id = "userEdit">
-                <div className = "nameInputGroup">
-                    <label htmlFor = "name">Nome</label>
-                    <input
-                        form = "userEdit"
-                        placeholder = "Nome"
-                        className = "nameInput"
-                        value = {user.name || ""}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,} "
-                        required
-                    />
-                </div>
-                <div className = "emailInputGroup">
-                    <label htmlFor = "email">E-mail</label>
-                    <input
-                        form = "userEdit"
-                        placeholder = "E-mail"
-                        className = "emailInput"
-                        value = {user.email || ""}
-                        onChange = {(e) => handleChangeEmail (e)}
-                        type = "email"
-                        required
-                   />
-                </div>
-                <OtherAttributes/>
                 <div className = "buttonsMain">
                     <button
                     className = "buttonMACAdd"

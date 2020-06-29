@@ -30,6 +30,28 @@
     padding-bottom: 10px;
 }
 
+.roleEditArea .optionInputGroup
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr 0fr;
+    grid-gap: 10px;
+}
+
+.roleEditArea .optionInputGroup .singleTrackOption, .singleDirectOption
+{
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    padding-bottom: 10px;
+}
+
+.roleEditArea .checkbox
+{
+    height: 30px;
+    width: 10px;
+    border: solid 1px #cccccc;
+    cursor: pointer
+}
+
 .roleEditArea label
 {
     width: 50px;
@@ -44,6 +66,11 @@
     align-items: center !important;
 }
 
+.roleEditArea .optionInputGroup label
+{
+    width: max-content;
+}
+
 .roleEditArea input
 {
     height: 30px;
@@ -54,12 +81,29 @@
     border-color: #cccccc;
 }
 
-.roleEditArea .daySelect
+.roleEditArea .dayInputGroup
 {
-    border-color: #cccccc;
+    display: grid;
+    grid-template-columns: 0fr 1fr 1fr 1fr 1fr 1fr 1fr 0fr;
+}
+
+.roleEditArea .singleDay
+{
+    display: grid;
+    grid-template-columns: 0fr 0fr;
+}
+
+.roleEditArea .singleDay label
+{
+    width: min-content;
     margin-right: 10px;
-    padding-left: 5px;
-    padding-right: 5px;
+}
+
+.roleEditArea .singleDay input
+{
+    width: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 .roleEditArea ::placeholder
@@ -117,4 +161,45 @@
 {
     color: #ffffff;
     background-color: #cccccc;
+}
+
+.roleEditArea .checkbox
+{
+    position: relative;
+    display: inline-block;
+}
+
+.roleEditArea .checkbox .tooltiptext
+{
+    visibility: hidden;
+    width: 120px;
+    background-color: #666666;
+    color: #fff;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.roleEditArea .checkbox .tooltiptext::after
+{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #666666 transparent transparent transparent;
+}
+
+.roleEditArea .checkbox:hover .tooltiptext
+{
+    visibility: visible;
+    opacity: 1;
 }

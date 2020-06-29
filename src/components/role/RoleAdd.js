@@ -1,6 +1,7 @@
 import React, {useState, useContext} from "react";
 import api from "../../services/api";
 
+import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import addedRoleContext from "../context/addedRoleContext";
 
@@ -8,10 +9,11 @@ import "../../css/role/roleAdd.css";
 
 function RoleAdd ()
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {addedRole, setAddedRole} = useContext (addedRoleContext);
     const [name, setName] = useState ("");
-    const [roleTimes, setRoleTimes] = useState ([]);
+    const [times, setTimes] = useState ([]);
 
     function separate (values)
     {
@@ -19,7 +21,7 @@ function RoleAdd ()
         (
             (value, index) =>
             {
-                if (typeof (value.start) == "string")
+                if (typeof (value.start) === "string")
                 {
                     var a = value.start.match(/\d+/g).map(Number);
                     values[index].start = (a[0]*60)+a[1];
@@ -39,63 +41,111 @@ function RoleAdd ()
 
     function handleChangeStart (index, e)
     {
-        const values = [...roleTimes];
+        const values = [...times];
         values[index].start = e.target.value;
-        setRoleTimes (values);
+        setTimes (values);
     }
 
     function handleChangeEnd (index, e)
     {
-        const values = [...roleTimes];
+        const values = [...times];
         values[index].end = e.target.value;
-        setRoleTimes (values);
+        setTimes (values);
     }
 
-    function handleChangeDay (index, e)
+    function handleChangeDay (index, value)
     {
-        const values = [...roleTimes];
-        values[index].day = e.target.options[e.target.selectedIndex].value;
-        setRoleTimes (values);
+        const values = [...times];
+        if (values[index].day[value] === true)
+        {
+            values[index].day[value] = false;
+        }
+        else
+        {
+            values[index].day[value] = true;
+        }
+        setTimes (values);
+    }
+
+    function handleChangeTrack (index)
+    {
+        const values = [...times];
+        if (values[index].options.track === true)
+        {
+            values[index].options.track = false;
+        }
+        else
+        {
+            values[index].options.track = true;
+        }
+        setTimes (values);
+    }
+
+    function handleChangeDirect (index)
+    {
+        const values = [...times];
+        if (values[index].options.direct === true)
+        {
+            values[index].options.direct = false;
+        }
+        else
+        {
+            values[index].options.direct = true;
+        }
+        setTimes (values);
     }
 
     function handleAddTime ()
     {
-        const values = [...roleTimes];
-        values.push ({start: 0, end: 0, day: 0});
-        setRoleTimes (values);
+        const values = [...times];
+        values.push
+        (
+            {
+                start: 0,
+                end: 0,
+                day: [false, false, false, false, false, false, false],
+                options:
+                {
+                    track: false,
+                    direct: false
+                }
+            }
+        );
+        setTimes (values);
     }
 
     function handleRemoveTime (index)
     {
-        const values = [...roleTimes];
+        const values = [...times];
         values.splice (index, 1);
-        setRoleTimes (values);
+        setTimes (values);
     }
 
     async function handleSubmit (e)
     {
         e.preventDefault ();
-        const times = separate (roleTimes);
+        const tempTimes = separate (times);
+        const owner = currentCentral._id;
         const response = await api.post
         (
             "/rolestore",
             {
                 name,
-                times
+                times: tempTimes,
+                owner
             }
         );
         if (response.data === "")
         {
-            window.alert ("Já existe uma função com esse nome.");
+            window.alert ("Já existe um papel com esse nome.");
         }
         else
         {
             var newRoles = allRoles;
             newRoles.unshift (response.data);
             setAllRoles (newRoles);
-            window.alert (`A função ${name} foi criada.`);
+            window.alert (`O papel ${name} foi criado.`);
             setAddedRole (response.data);
-            document.getElementById ("roleAdd").reset();
         }
     }
 
@@ -115,9 +165,9 @@ function RoleAdd ()
                     />
                 </div>
                 {
-                    roleTimes.map
+                    times.map
                     (
-                        (roleTime, index) =>
+                        (time, index) =>
                         {
                             return (
                                 <div className = "singleTime" key = {[index, "a"]}>
@@ -127,7 +177,7 @@ function RoleAdd ()
                                             type = "time"
                                             form = "roleAdd"
                                             className = "TimeInput"
-                                            value = {roleTime.start || ""}
+                                            value = {time.start || ""}
                                             onChange = {(e) => handleChangeStart (index, e)}
                                         />
                                         <div className = "space"></div>
@@ -136,26 +186,90 @@ function RoleAdd ()
                                             type = "time"
                                             form = "roleAdd"
                                             className = "TimeInput"
-                                            value = {roleTime.end || ""}
+                                            value = {time.end || ""}
                                             onChange = {(e) => handleChangeEnd (index, e)}
                                         />
                                     </div>
-                                    <div className = "dayInputGroup" key = {index}>
+                                    <div className = "dayInputGroup" key = {index, "c"}>
                                         <label htmlFor = "Time">Dia {index+1}</label>
-                                        <select
-                                        className = "daySelect"
-                                        value = {roleTime.day}
-                                        onChange = {(e) => handleChangeDay (index, e)}
-                                        >
-                                            <option key = {[index, 0]} value = {0}>Dias úteis</option>
-                                            <option key = {[index, 1]} value = {1}>Domingo</option>
-                                            <option key = {[index, 2]} value = {2}>Segunda</option>
-                                            <option key = {[index, 3]} value = {3}>Terça</option>
-                                            <option key = {[index, 4]} value = {4}>Quarta</option>
-                                            <option key = {[index, 5]} value = {5}>Quinta</option>
-                                            <option key = {[index, 6]} value = {6}>Sexta</option>
-                                            <option key = {[index, 7]} value = {7}>Sábado</option>
-                                        </select>
+                                        <div className = "singleDay" key = {[index, 0]}>
+                                            <label htmlFor = "Time">D</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[0] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 0)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 1]}>
+                                            <label htmlFor = "Time">S</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[1] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 1)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 2]}>
+                                            <label htmlFor = "Time">T</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[2] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 2)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 3]}>
+                                            <label htmlFor = "Time">Q</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[3] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 3)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 4]}>
+                                            <label htmlFor = "Time">Q</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[4] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 4)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 5]}>
+                                            <label htmlFor = "Time">S</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[5] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 5)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 6]}>
+                                            <label htmlFor = "Time">S</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[6] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 6)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className = "optionInputGroup" key = {index, "d"}>
+                                        <div className = "singleTrackOption" key = {[index, 7]}>
+                                            <label htmlFor = "Time">Rastrear pulos</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.options.track ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeTrack (index)}
+                                            >
+                                                <span className = "tooltiptext">Ao fim deste horário, para cada tranca afetada não acessada por cada usuário afetado, você será notificado.</span>
+                                            </div>
+                                        </div>
+                                        <div className = "singleDirectOption" key = {[index, 8]}>
+                                            <label htmlFor = "Time">Obedecer proprietário</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.options.direct ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDirect (index)}
+                                            >
+                                                <span className = "tooltiptext">Este horário só afetará trancas diretamente pertencentes a grupos com este papel.</span>
+                                            </div>
+                                        </div>
                                         <button
                                         className = "buttonTimeRemove"
                                         type = "button"
@@ -181,7 +295,7 @@ function RoleAdd ()
                 type = "submit"
                 onClick = {(e) => handleSubmit (e)}
                 >
-                    Criar função
+                    Criar papel
                 </button>
             </form>
         </div>

@@ -20,16 +20,49 @@
 .roleAddArea .dayInputGroup
 {
     display: grid;
-    grid-template-columns: 0fr 1fr 0fr;
+    grid-template-columns: 0fr 1fr 1fr 1fr 1fr 1fr 1fr 0fr;
+}
+
+.roleAddArea .optionInputGroup
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr 0fr;
+    grid-gap: 10px;
+}
+
+.roleAddArea .optionInputGroup .singleTrackOption, .singleDirectOption
+{
+    display: grid;
+    grid-template-columns: 1fr 0fr;
     padding-bottom: 10px;
 }
 
-.roleAddArea .daySelect
+.roleAddArea .optionInputGroup .singleTrackOption
 {
-    border-color: #cccccc;
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    padding-bottom: 10px;
+}
+
+.roleAddArea .checkbox
+{
+    height: 30px;
+    width: 10px;
+    border: solid 1px #cccccc;
+    cursor: pointer
+}
+
+.roleAddArea .singleDay
+{
+    display: grid;
+    grid-template-columns: 0fr 0fr;
+    padding-bottom: 10px;
+}
+
+.roleAddArea .singleDay label
+{
+    width: min-content;
     margin-right: 10px;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 .roleAddArea label
@@ -44,6 +77,11 @@
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center !important;
+}
+
+.roleAddArea .optionInputGroup label
+{
+    width: max-content;
 }
 
 .roleAddArea input
@@ -114,4 +152,45 @@
 {
     color: #ffffff;
     background-color: #cccccc;
+}
+
+.roleAddArea .checkbox
+{
+    position: relative;
+    display: inline-block;
+}
+
+.roleAddArea .checkbox .tooltiptext
+{
+    visibility: hidden;
+    width: 120px;
+    background-color: #666666;
+    color: #fff;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+.roleAddArea .checkbox .tooltiptext::after
+{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #666666 transparent transparent transparent;
+}
+
+.roleAddArea .checkbox:hover .tooltiptext
+{
+    visibility: visible;
+    opacity: 1;
 }

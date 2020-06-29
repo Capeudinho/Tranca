@@ -17,6 +17,7 @@ function RoleInfo ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 const _id = match.params.id;
@@ -30,9 +31,13 @@ function RoleInfo ({match})
                         }
                     }
                 )
+                if (mounted)
+                {
                 setRole (response.data);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match]
     );
@@ -51,7 +56,7 @@ function RoleInfo ({match})
 
     async function handleDeleteRole (_id)
     {
-        if (window.confirm(`Você realmente deseja remover a função ${role.name}?`))
+        if (window.confirm (`Você realmente deseja remover o papel ${role.name}?`))
         {
             const response = await api.delete
             (
@@ -65,7 +70,7 @@ function RoleInfo ({match})
             );
             if (response.data._id === _id)
             {
-                window.alert(`A função ${role.name} foi excluída.`);
+                window.alert(`O papel ${role.name} foi excluído.`);
                 setDeletedRole (role);
             }
         }
@@ -74,7 +79,7 @@ function RoleInfo ({match})
     return (
         <div className = "roleInfoArea">
             <div className = "name">{role.name}</div>
-            <div className = "type">Função</div>
+            <div className = "type">Papel</div>
             <Link to = {match.url.concat ("/edit")}>
                 <button
                 className = "buttonEdit"
@@ -82,7 +87,7 @@ function RoleInfo ({match})
                     Editar
                 </button>
             </Link>
-            <Link to = {match.url.replace (role._id, "")}>
+            <Link to = {match.url.replace ("/"+role._id, "")}>
                 <button
                 className = "buttonDelete"
                 onClick = {() => handleDeleteRole (role._id)}

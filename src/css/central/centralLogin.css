@@ -1,0 +1,128 @@
+.centralLoginArea
+{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 2fr 1fr;
+    flex-grow: 1;
+    padding-top: 50px;
+}
+
+.centralLoginArea .inputGroup
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    flex-grow: 1;
+}
+
+.centralLoginArea label
+{
+    width: 50px;
+    height: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+}
+
+.centralLoginArea input
+{
+    height: 30px;
+    font-size: 12px;
+    padding-left: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}
+
+.centralLoginArea .inputGroupPassword
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr 0fr 0fr;
+    padding-bottom: 10px;
+}
+
+.centralLoginArea .inputGroupPassword .space
+{
+    width: 10px;
+}
+
+.centralLoginArea .inputGroupPassword button
+{
+    padding-right: 10px;
+    border-color: #cccccc;
+    color: #cccccc;
+}
+
+.centralLoginArea .inputGroupPassword button:hover
+{
+    background-color: #cccccc;
+    color: #ffffff;
+}
+
+.centralLoginArea ::placeholder
+{
+    opacity: 1;
+    color: #cccccc;
+}
+
+.centralLoginArea .register, .login
+{
+    padding: 10px;
+    padding-bottom: 0px;
+    border: solid 1px #cccccc;
+}
+
+.centralLoginArea .registerInput, .loginInput, .buttonRegister, .buttonLogin, .semispace
+{
+    height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.centralLoginArea .semispace
+{
+    padding-left: 0px;
+    color: #cc5151;
+    font-size: 12px;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+}
+
+.centralLoginArea .option
+{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.centralLoginArea button
+{
+    height: 30px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    color: #51a3cc;
+    border-color: #51a3cc;
+    background-color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.centralLoginArea button:hover
+{
+    color: #ffffff;
+    background-color: #51a3cc;
+}

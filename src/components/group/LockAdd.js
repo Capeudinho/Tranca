@@ -1,12 +1,15 @@
 import React, {useState, useContext} from "react";
 import api from "../../services/api";
 
+import currentCentralContext from "../context/currentCentralContext";
 import addedLockContext from "../context/addedLockContext";
 
 import "../../css/group/lockAdd.css";
 
 function LockAdd ({match})
 {
+    
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {addedLock, setAddedLock} = useContext (addedLockContext);
     const [name, setName] = useState ("");
     
@@ -20,12 +23,14 @@ function LockAdd ({match})
     {
         e.preventDefault ();
         const _id = match.params.id;
+        const owner = currentCentral._id;
         const response = await api.post
         (
             "/lockstore",
             {
                 name,
-                _id
+                _id,
+                owner
             }
         );
         if (response.data === "")

@@ -21,6 +21,7 @@ function GroupInfo ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 const _id = match.params.id;
@@ -34,9 +35,13 @@ function GroupInfo ({match})
                         }
                     }
                 );
-                setGroup (response.data);
+                if (mounted)
+                {
+                    setGroup (response.data);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match]
     )
@@ -69,7 +74,7 @@ function GroupInfo ({match})
     {
         if (group.hasOwnProperty ("content") && group.holder.length !== 0)
         {
-            if (window.confirm(`Você realmente deseja remover o grupo ${group.name}?`))
+            if (window.confirm (`Você realmente deseja remover o grupo ${group.name}?`))
             {
                 const response = await api.delete
                 (
@@ -94,7 +99,7 @@ function GroupInfo ({match})
         }
         else
         {
-            if (window.confirm(`Você realmente deseja remover a tranca ${group.name}?`))
+            if (window.confirm (`Você realmente deseja remover a tranca ${group.name}?`))
             {
                 const response = await api.delete
                 (
@@ -108,7 +113,7 @@ function GroupInfo ({match})
                 );
                 if (response.data._id === _id)
                 {
-                    window.alert(`A tranca ${group.name} foi excluído.`);
+                    window.alert(`A tranca ${group.name} foi excluída.`);
                     setDeletedLock (response.data);
                 }
             }

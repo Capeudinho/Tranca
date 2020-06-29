@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import currentCentralContext from "../context/currentCentralContext";
 import deletedUserContext from "../context/deletedUserContext";
 import updatedUserContext from "../context/updatedUserContext";
 import addedUserContext from "../context/addedUserContext";
@@ -10,44 +11,46 @@ import "../../css/user/userList.css";
 
 function UserList ()
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const {addedUser, setAddedUser} = useContext (addedUserContext);
     const [users, setUsers] = useState ([]);
     const [page, setPage] = useState (1);
     const [pageLimit, setPageLimit] = useState (1);
+    const [name, setName] = useState ("");
+    const [update, setUpdate] = useState (0);
 
     useEffect
     (
         () =>
         {
-            setPage (page);
-        },
-        []
-    );
-
-    useEffect
-    (
-        () =>
-        {
+            let mounted = true;
             const runEffect = async () =>
             {
+                const owner = currentCentral._id;
                 const response = await api.get
                 (
                     "/userlistpag",
                     {
                         params:
                         {
-                            page
+                            page,
+                            name,
+                            owner
                         }
                     }
                 );
-                setPageLimit (response.data.pages);
-                setUsers ([...users, ...response.data.docs]);
+                if (mounted)
+                {
+                    setPageLimit (response.data.pages);
+                    setUsers ([...users, ...response.data.docs]);
+                }
             }
-            runEffect();
+            runEffect ();
+            return (() => {mounted = false;});
         },
-        [page]
+        [page, update]
     );
 
     useEffect
@@ -62,7 +65,9 @@ function UserList ()
                     {
                         if (user._id === deletedUser._id)
                         {
-                            users.splice (index, 1);
+                            var newUsers = [...users];
+                            newUsers.splice (index, 1);
+                            setUsers (newUsers);
                         }
                     }
                 )
@@ -85,7 +90,7 @@ function UserList ()
                         {
                             var newUsers = [...users];
                             newUsers [index] = updatedUser;
-                            setUsers(newUsers);
+                            setUsers (newUsers);
                         }
                     }
                 )
@@ -108,8 +113,38 @@ function UserList ()
         [addedUser]
     );
 
+    function handleChangeName (e)
+    {
+        const value = e.target.value;
+        setName (value);
+    }
+
+    function handleSubmit (e)
+    {
+        e.preventDefault ();
+        setPage (1);
+        setUsers ([]);
+        setUpdate (update+1);
+    }
+
     return (
         <div className = "userListArea">
+            <div className = "searchBar"> 
+                <form className = "nameInputGroup">
+                    <label>Nome</label>
+                    <input
+                    value = {name}
+                    onChange = {(e) => handleChangeName (e)}
+                    placeholder = "Nome"
+                    />
+                    <button className = "buttonSearch" onClick = {(e) => handleSubmit (e)}>Pesquisar</button>
+                </form>
+                <Link to = "users/adduser">
+                    <button className = "buttonAdd buttonAddUser" type = "button">
+                        Usuário
+                    </button>
+                </Link>
+            </div>
             {
                 users.map
                 (
@@ -117,9 +152,10 @@ function UserList ()
                     {
                         return (
                             <div key = {index} className = "user">
-                                <Link key = {index} to = {`/listusers/${user._id}`}>
+                                <Link key = {index} to = {`/users/${user._id}`}>
                                     <button
                                     className = "buttonUser"
+                                    type = "button"
                                     key = {index}>
                                         {user.name}
                                     </button>

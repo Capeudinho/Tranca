@@ -2,12 +2,14 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import currentCentralContext from "../context/currentCentralContext";
 import updatedRoleContext from "../context/updatedRoleContext";
 
 import "../../css/role/roleEdit.css";
 
 function RoleEdit ({match})
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {updatedRole, setUpdatedRole} = useContext (updatedRoleContext);
     const [role, setRole] = useState ({});
     const [update, setUpdate] = useState (0);
@@ -16,6 +18,7 @@ function RoleEdit ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 const _id = match.params.id;
@@ -37,10 +40,14 @@ function RoleEdit ({match})
                         response.data.times[index].end = unite (time.end);
                     }
                 )
-                setRole (response.data);
-                setUpdate (update+1);
+                if (mounted)
+                {
+                    setRole (response.data);
+                    setUpdate (update+1);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match.params.id]
     )
@@ -49,7 +56,7 @@ function RoleEdit ({match})
     {
         var a = 0;
         var b = 0;
-        for (var k = true; k == true;)
+        for (var k = true; k === true;)
         {
             if (value-60 >= 0)
             {
@@ -81,7 +88,7 @@ function RoleEdit ({match})
         (
             (value, index) =>
             {
-                if (typeof (value.start) == "string")
+                if (typeof (value.start) === "string")
                 {
                     var a = value.start.match(/\d+/g).map(Number);
                     values[index].start = (a[0]*60)+a[1];
@@ -118,10 +125,49 @@ function RoleEdit ({match})
         setRole (newRole);
     }
 
-    function handleChangeDay (index, e)
+    function handleChangeDay (index, value)
     {
         const values = [...role.times];
-        values[index].day = e.target.options[e.target.selectedIndex].value;
+        if (values[index].day[value] === true)
+        {
+            values[index].day[value] = false;
+        }
+        else
+        {
+            values[index].day[value] = true;
+        }
+        var newRole = Object.assign ({}, role);
+        newRole.times = values;
+        setRole (newRole);
+    }
+
+    function handleChangeTrack (index)
+    {
+        const values = [...role.times];
+        if (values[index].options.track === true)
+        {
+            values[index].options.track = false;
+        }
+        else
+        {
+            values[index].options.track = true;
+        }
+        var newRole = Object.assign ({}, role);
+        newRole.times = values;
+        setRole (newRole);
+    }
+
+    function handleChangeDirect (index)
+    {
+        const values = [...role.times];
+        if (values[index].options.direct === true)
+        {
+            values[index].options.direct = false;
+        }
+        else
+        {
+            values[index].options.direct = true;
+        }
         var newRole = Object.assign ({}, role);
         newRole.times = values;
         setRole (newRole);
@@ -130,7 +176,19 @@ function RoleEdit ({match})
     function handleAddTime ()
     {
         const values = [...role.times];
-        values.push ({start: 0, end: 0, day: 0});
+        values.push
+        (
+            {
+                start: 0,
+                end: 0,
+                day: [false, false, false, false, false, false, false],
+                options:
+                {
+                    track: false,
+                    direct: false
+                }
+            }
+        );
         var newRole = Object.assign ({}, role);
         newRole.times = values;
         setRole (newRole);
@@ -153,12 +211,14 @@ function RoleEdit ({match})
             const _id = role._id;
             const name = role.name;
             const times = separate (role.times);
+            const owner = currentCentral._id;
             const response = await api.put
             (
                 "/roleidupdate",
                 {
                     name,
-                    times
+                    times,
+                    owner
                 },
                 {
                     params:
@@ -169,7 +229,7 @@ function RoleEdit ({match})
             );
             if (response.data !== null)
             {
-                window.alert(`A função ${role.name} foi atualizada.`);
+                window.alert (`O papel ${role.name} foi atualizado.`);
                 setUpdatedRole (role);
             }
         }
@@ -211,22 +271,86 @@ function RoleEdit ({match})
                                             onChange = {(e) => handleChangeEnd (index, e)}
                                         />
                                     </div>
-                                    <div className = "dayInputGroup" key = {index}>
+                                    <div className = "dayInputGroup" key = {index, "c"}>
                                         <label htmlFor = "Time">Dia {index+1}</label>
-                                        <select
-                                        className = "daySelect"
-                                        value = {time.day}
-                                        onChange = {(e) => handleChangeDay (index, e)}
-                                        >
-                                            <option key = {[index, 0]} value = {0}>Dias úteis</option>
-                                            <option key = {[index, 1]} value = {1}>Domingo</option>
-                                            <option key = {[index, 2]} value = {2}>Segunda</option>
-                                            <option key = {[index, 3]} value = {3}>Terça</option>
-                                            <option key = {[index, 4]} value = {4}>Quarta</option>
-                                            <option key = {[index, 5]} value = {5}>Quinta</option>
-                                            <option key = {[index, 6]} value = {6}>Sexta</option>
-                                            <option key = {[index, 7]} value = {7}>Sábado</option>
-                                        </select>
+                                        <div className = "singleDay" key = {[index, 0]}>
+                                            <label htmlFor = "Time">D</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[0] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 0)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 1]}>
+                                            <label htmlFor = "Time">S</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[1] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 1)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 2]}>
+                                            <label htmlFor = "Time">T</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[2] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 2)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 3]}>
+                                            <label htmlFor = "Time">Q</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[3] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 3)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 4]}>
+                                            <label htmlFor = "Time">Q</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[4] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 4)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 5]}>
+                                            <label htmlFor = "Time">S</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[5] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 5)}
+                                            />
+                                        </div>
+                                        <div className = "singleDay" key = {[index, 6]}>
+                                            <label htmlFor = "Time">S</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.day[6] ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDay (index, 6)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className = "optionInputGroup" key = {index, "d"}>
+                                        <div className = "singleTrackOption" key = {[index, 7]}>
+                                            <label htmlFor = "Time">Rastrear pulos</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.options.track ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeTrack (index)}
+                                            >
+                                                <span className = "tooltiptext">Ao fim deste horário, para cada tranca afetada não acessada por cada usuário afetado, você será notificado.</span> 
+                                            </div>
+                                        </div>
+                                        <div className = "singleDirectOption" key = {[index, 8]}>
+                                            <label htmlFor = "Time">Obedecer proprietário</label>
+                                            <div
+                                            className = "checkbox"
+                                            style = {{backgroundColor: time.options.direct ? "#cccccc" : "#ffffff"}}
+                                            onClick = {() => handleChangeDirect (index)}
+                                            >
+                                                <span className = "tooltiptext">Este horário só afetará trancas diretamente pertencentes a grupos com este papel.</span>
+                                            </div>
+                                        </div>
                                         <button
                                         className = "buttonTimeRemove"
                                         type = "button"

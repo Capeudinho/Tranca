@@ -1,0 +1,166 @@
+.activityListArea .log
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    grid-gap: 10px;
+    margin-bottom: 10px;
+}
+
+.activityListArea .time, .info
+{
+    width: 100px;
+    height: 30px;
+    border: solid 2px #cccccc;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+}
+
+.activityListArea .info
+{
+    width: 100%;
+    cursor: pointer;
+}
+
+.activityListArea .info:hover
+{
+    background-color: #cccccc;
+}
+
+.activityListArea .timewarning, .infowarning
+{
+    border-color: #cc5151;
+}
+
+.activityListArea .infowarning:hover
+{
+    background-color: #cc5151;
+}
+
+.activityListArea a
+{
+    text-decoration: none;
+}
+
+.activityListArea .buttonLoadMore, .buttonSearch, .buttonClean
+{
+    height: 30px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    cursor: pointer;
+    color: #51a3cc;
+    border-color: #51a3cc;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.activityListArea .buttonLoadMore:hover, .buttonSearch:hover
+{
+    color: #ffffff;
+    background-color: #51a3cc;
+}
+
+.activityListArea .buttonClean
+{
+    border-color: #cccccc;
+    color: #cccccc;
+    margin-left: 10px;
+}
+
+.activityListArea .buttonClean:hover
+{
+    color: #ffffff;
+    background-color: #cccccc;
+}
+
+.activityListArea .searchBar
+{
+    border-bottom: solid 1px #cccccc;
+    margin-bottom: 10px;
+}
+
+.activityListArea .searchBar .firstRow, .secondRow
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    margin-bottom: 10px;
+}
+
+.activityListArea .searchBar .thirdRow
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    margin-bottom: 10px;
+}
+
+.activityListArea .searchBar .grouping
+{
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    grid-gap: 10px;
+}
+
+.activityListArea .searchBar .inputGroup
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+}
+
+.activityListArea .searchBar .timeInputGroup form
+{
+    display: grid;
+    grid-template-columns: 0fr 1fr 0fr;
+}
+
+.activityListArea .searchBar label
+{
+    width: 50px;
+    height: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+}
+
+.activityListArea .searchBar input, select
+{
+    height: 30px;
+    font-size: 12px;
+    padding-left: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}
+
+.activityListArea .searchBar button
+{
+    width: 100px;
+    text-align: left;
+}
+
+.activityListArea ::placeholder
+{
+    opacity: 1;
+    color: #cccccc;
+}

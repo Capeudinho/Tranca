@@ -33,7 +33,13 @@
     width: 100px;
 }
 
-.groupListArea .buttonAddGroup
+.groupListArea a
+{
+    height: 30px;
+    width: 100px;
+}
+
+.groupListArea .link
 {
     margin-right: 10px;
 }

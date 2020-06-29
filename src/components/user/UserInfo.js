@@ -11,7 +11,13 @@ function UserInfo ({match})
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
-    const [user, setUser] = useState ({});
+    const [user, setUser] = useState
+    (
+        {
+            name: "",
+            email: "",
+        }
+    );
     const [update, setUpdate] = useState (0);
 
 
@@ -19,6 +25,7 @@ function UserInfo ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 const _id = match.params.id;
@@ -32,10 +39,14 @@ function UserInfo ({match})
                         }
                     }
                 );
-                setUser (response.data);
-                setUpdate (update+1);
+                if (mounted)
+                {
+                    setUser (response.data);
+                    setUpdate (update+1);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match]
     );
@@ -54,7 +65,7 @@ function UserInfo ({match})
 
     async function handleDeleteUser (_id)
     {
-        if (window.confirm(`Você realmente deseja remover o usuário ${user.name}?`))
+        if (window.confirm (`Você realmente deseja remover o usuário ${user.name}?`))
         {
             const response = await api.delete
             (
@@ -81,7 +92,7 @@ function UserInfo ({match})
             return (
                 <div>
                     <div className = "name">{user.name}</div>
-                    <div className = "email">{user.email}</div>
+                    <div className = "type">Usuário</div>
                 </div>
             )
         }
@@ -101,7 +112,7 @@ function UserInfo ({match})
                     Editar
                 </button>
             </Link>
-            <Link to = {match.url.replace (user._id, "")}>
+            <Link to = {match.url.replace ("/"+user._id, "")}>
                 <button
                 className = "buttonDelete"
                 onClick = {() => handleDeleteUser (user._id)}

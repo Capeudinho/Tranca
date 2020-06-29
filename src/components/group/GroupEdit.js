@@ -13,7 +13,13 @@ function GroupEdit ({match})
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
     const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
-    const [group, setGroup] = useState ({name: ""});
+    const [group, setGroup] = useState
+    (
+        {
+            name: "",
+            roles: []
+        }
+    );
     const [roles, setRoles] = useState ([]);
     const [update, setUpdate] = useState (0);
 
@@ -21,6 +27,7 @@ function GroupEdit ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 const _id = match.params.id;
@@ -34,25 +41,29 @@ function GroupEdit ({match})
                         }
                     }
                 );
-                setGroup (response.data);
-                if (response.data.hasOwnProperty ("content"))
+                if (mounted)
                 {
-                    for (var k = 0; k < response.data.roles.length; k++)
+                    setGroup (response.data);
+                    if (response.data.hasOwnProperty ("content"))
                     {
-                        for (var j = 0; j < allRoles.length; j++)
+                        for (var k = 0; k < response.data.roles.length; k++)
                         {
-                            if (response.data.roles[k] == allRoles[j]._id)
+                            for (var j = 0; j < allRoles.length; j++)
                             {
-                                var tempRoles = roles;
-                                tempRoles.push (allRoles[j]);
-                                setRoles (tempRoles);
+                                if (response.data.roles[k] === allRoles[j]._id)
+                                {
+                                    var tempRoles = roles;
+                                    tempRoles.push (allRoles[j]);
+                                    setRoles (tempRoles);
+                                }
                             }
                         }
                     }
+                    setUpdate (update+1);
                 }
-                setUpdate (update+1);
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match.params.id]
     )
@@ -76,7 +87,7 @@ function GroupEdit ({match})
         (
             (role) =>
             {
-                if (role._id == e.target.options[e.target.selectedIndex].id)
+                if (role._id === e.target.options[e.target.selectedIndex].id)
                 {
                     newRoles[index] = role;
                 }
@@ -87,14 +98,21 @@ function GroupEdit ({match})
 
     function handleAddRole ()
     {
-        const values = [...group.roles];
-        values.push (allRoles[0]);
-        var newGroup = Object.assign ({}, group);
-        newGroup.roles = values;
-        setGroup (newGroup);
-        const newRoles = roles;
-        newRoles.push (allRoles[0]);
-        setRoles (newRoles);
+        if (allRoles.length === 0)
+        {
+            window.alert ("Você não possui papéis criados.");
+        }
+        else
+        {
+            const values = [...group.roles];
+            values.push (allRoles[0]);
+            var newGroup = Object.assign ({}, group);
+            newGroup.roles = values;
+            setGroup (newGroup);
+            const newRoles = roles;
+            newRoles.push (allRoles[0]);
+            setRoles (newRoles);
+        }
     }
 
     function handleRemoveRole (index)
@@ -170,12 +188,21 @@ function GroupEdit ({match})
         }
     }
 
-    function OtherAttributes ()
-    {
-        if (group !== null && group !== undefined && group.hasOwnProperty ("content") && group.hasOwnProperty ("roles"))
-        {
-            return (
-                <div>
+    return (
+        <div className = "groupEditArea">
+            <form id = "groupEdit">
+                <div className = "nameInputGroup">
+                    <label htmlFor = "name">Nome</label>
+                    <input
+                        form = "groupEdit"
+                        placeholder = "Nome"
+                        className = "nameInput"
+                        value = {group.name}
+                        onChange = {(e) => handleChangeName (e)}
+                        pattern = "[A-Za-z0-9_]{3,} "
+                        required
+                    />
+                </div>
                 {
                     roles.map
                     (
@@ -226,31 +253,6 @@ function GroupEdit ({match})
                 >
                     Adicionar papel
                 </button>
-                </div>
-            )
-        }
-        else
-        {
-            return <div/>
-        }
-    }
-
-    return (
-        <div className = "groupEditArea">
-            <form id = "groupEdit">
-                <div className = "nameInputGroup">
-                    <label htmlFor = "name">Nome</label>
-                    <input
-                        form = "groupEdit"
-                        placeholder = "Nome"
-                        className = "nameInput"
-                        value = {group.name || ""}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,} "
-                        required
-                    />
-                </div>
-                <OtherAttributes/>
                 <Link to = {match.url.replace ("edit", "")}>
                     <button
                     className = "buttonSubmit"

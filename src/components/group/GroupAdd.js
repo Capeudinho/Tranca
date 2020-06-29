@@ -1,6 +1,7 @@
 import React, {useState, useContext} from "react";
 import api from "../../services/api";
 
+import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import addedGroupContext from "../context/addedGroupContext";
 
@@ -8,6 +9,7 @@ import "../../css/group/groupAdd.css";
 
 function GroupAdd ({match})
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {addedGroup, setAddedGroup} = useContext (addedGroupContext);
     const [name, setName] = useState ("");
@@ -26,7 +28,7 @@ function GroupAdd ({match})
         (
             (role) =>
             {
-                if (role._id == e.target.options[e.target.selectedIndex].id)
+                if (role._id === e.target.options[e.target.selectedIndex].id)
                 {
                     newRoles[index] = role;
                 }
@@ -37,9 +39,16 @@ function GroupAdd ({match})
 
     function handleAddRole ()
     {
-        const newRoles = [...roles];
-        newRoles.push (allRoles[0]);
-        setRoles (newRoles);
+        if (allRoles.length === 0)
+        {
+            window.alert ("Você não possui papéis criados.");
+        }
+        else
+        {
+            const newRoles = [...roles];
+            newRoles.push (allRoles[0]);
+            setRoles (newRoles);
+        }
     }
 
     function handleRemoveRole (index)
@@ -54,13 +63,15 @@ function GroupAdd ({match})
     {
         e.preventDefault ();
         const _id = match.params.id;
+        const owner = currentCentral._id;
         const response = await api.post
         (
             "/groupstore",
             {
                 name,
                 roles,
-                _id
+                _id,
+                owner
             }
         );
         if (response.data === "")

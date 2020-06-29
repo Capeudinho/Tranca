@@ -28,6 +28,7 @@ function GroupList ({match})
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
                 const _id = match.params.id;
@@ -52,9 +53,13 @@ function GroupList ({match})
                         }
                     }
                 );
-                setGroups (response.data);
+                if (mounted)
+                {
+                    setGroups (response.data);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         [match.url]
     )
@@ -87,7 +92,6 @@ function GroupList ({match})
                             setUpdate (update+1);
                             goBack = true;
                         }
-                        console.log ("Epa");
                     }
                     for (var i = 0; i < deletedGroups.otherLocks.length; i++)
                     {
@@ -99,13 +103,11 @@ function GroupList ({match})
                             setUpdate (update+1);
                             goBack = true;
                         }
-                        console.log ("Epa");
                     }
                     if (goBack === true)
                     {
                         k--;
                     }
-                    console.log ("Epa");
                 }
                 setGroups (newGroups);
             }
@@ -223,7 +225,7 @@ function GroupList ({match})
                 <div className = "breadcrumbs">
                     {groupPath}
                 </div>
-                <Link to = {match.url.concat ("/addgroup")}>
+                <Link className = "link" to = {match.url.concat ("/addgroup")}>
                     <button className = "buttonAdd buttonAddGroup">
                         Grupo
                     </button>

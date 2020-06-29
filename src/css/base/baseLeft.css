@@ -1,8 +1,12 @@
 .baseLeftArea .area
 {
-    display: grid;
-    grid-template-columns: 1fr 0fr;
     margin-bottom: 10px;
+}
+
+.baseLeftArea .areaLog
+{
+    display: grid;
+    grid-template-columns: 1fr 0fr 0fr;
 }
 
 .baseLeftArea button
@@ -26,7 +30,7 @@
     padding-left: 10px;
 }
 
-.baseLeftArea .buttonListMenu
+.baseLeftArea .buttonListOther
 {
     color: #cccccc;
     border-color: #cccccc;
@@ -49,7 +53,7 @@
     background-color: #51a3cc;
 }
 
-.baseLeftArea .buttonListMenu:hover
+.baseLeftArea .buttonListOther:hover
 {
     color: #ffffff;
     background-color: #cccccc;
@@ -59,4 +63,36 @@
 {
     color: #ffffff;
     background-color: #51cc51;
+}
+
+.baseLeftArea .entry
+{
+    height: 30px;
+    width: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin-left: 10px;
+    display: -webkit-flex !important;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center !important;
+    justify-content: center;
+}
+
+.baseLeftArea .entryNormal
+{
+    border-color: #cccccc;
+    color: #cccccc;
+}
+
+.baseLeftArea .entryWarning
+{
+    border-color: #cc5151;
+    color: #cc5151;
 }

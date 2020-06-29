@@ -1,6 +1,7 @@
 import React, {useState, useContext} from "react";
 import api from "../../services/api";
 
+import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import addedUserContext from "../context/addedUserContext";
 
@@ -8,6 +9,7 @@ import "../../css/user/userAdd.css";
 
 function UserAdd ()
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {addedUser, setAddedUser} = useContext (addedUserContext);
     const [name, setName] = useState ("");
@@ -55,7 +57,7 @@ function UserAdd ()
         (
             (role) =>
             {
-                if (role._id == e.target.options[e.target.selectedIndex].id)
+                if (role._id === e.target.options[e.target.selectedIndex].id)
                 {
                     newRoles[index] = role;
                 }
@@ -66,9 +68,16 @@ function UserAdd ()
 
     function handleAddRole ()
     {
-        const newRoles = [...roles];
-        newRoles.push (allRoles[0]);
-        setRoles (newRoles);
+        if (allRoles.length === 0)
+        {
+            window.alert ("Você não possui papéis criados.");
+        }
+        else
+        {
+            const newRoles = [...roles];
+            setRoles (newRoles);
+            newRoles.push (allRoles[0]);
+        }
     }
 
     function handleRemoveRole (index)
@@ -82,6 +91,7 @@ function UserAdd ()
     async function handleSubmit (e)
     {
         e.preventDefault ();
+        const owner = currentCentral._id;
         const response = await api.post
         (
             "/userstore",
@@ -89,7 +99,8 @@ function UserAdd ()
                 name,
                 email,
                 MACs,
-                roles
+                roles,
+                owner
             }
         );
         if (response.data === "")

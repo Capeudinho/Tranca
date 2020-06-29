@@ -3,7 +3,20 @@
     height: 100%;
 }
 
-.Main
+.menu
+{
+    height: 100%;
+}
+
+.sectionMainMenu
+{
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.main
 {
     display: grid;
     grid-template-columns: 1fr 4fr 2fr;
@@ -20,6 +33,13 @@
 {
     border-left: solid;
     border-right: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}
+
+.sectionAll
+{
+    border-left: solid;
     border-width: 1px;
     border-color: #cccccc;
 }

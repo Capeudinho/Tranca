@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import currentCentralContext from "../context/currentCentralContext";
 import groupPathContext from "../context/groupPathContext";
 import deletedGroupsContext from "../context/deletedGroupsContext";
 import updatedGroupContext from "../context/updatedGroupContext";
@@ -14,6 +15,7 @@ import "../../css/group/groupExplorer.css";
 
 function GroupExplorer (props)
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {groupPath, setGroupPath} = useContext (groupPathContext);
     const {deletedGroups, setDeletedGroups} = useContext (deletedGroupsContext);
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
@@ -29,21 +31,28 @@ function GroupExplorer (props)
     (
         () =>
         {
+            let mounted = true;
             const runEffect = async () =>
             {
+                const owner = currentCentral._id;
                 const response = await api.get
                 (
                     "/grouplevelindex",
                     {
                         params:
                         {
-                            level: 0
+                            level: 0,
+                            owner
                         }
                     }
                 );
-                setGroups (response.data);
+                if (mounted)
+                {
+                    setGroups (response.data);
+                }
             }
             runEffect();
+            return (() => {mounted = false;});
         },
         []
     )
