@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 
 import currentCentralContext from "../context/currentCentralContext";
 import updatedRoleContext from "../context/updatedRoleContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/role/roleEdit.css";
 
@@ -11,8 +12,15 @@ function RoleEdit ({match})
 {
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {updatedRole, setUpdatedRole} = useContext (updatedRoleContext);
-    const [role, setRole] = useState ({});
-    const [update, setUpdate] = useState (0);
+    const {message, setMessage} = useContext (messageContext);
+    const [role, setRole] = useState
+    (
+        {
+            name: "",
+            times: []
+        }
+    );
+    const [validName, setValidName] = useState (true);
 
     useEffect
     (
@@ -43,7 +51,6 @@ function RoleEdit ({match})
                 if (mounted)
                 {
                     setRole (response.data);
-                    setUpdate (update+1);
                 }
             }
             runEffect();
@@ -100,10 +107,22 @@ function RoleEdit ({match})
         return values;
     }
 
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
+
     function handleChangeName (e)
     {
         var newRole = Object.assign ({}, role);
         newRole.name = e.target.value;
+        checkName (e.target.value);
         setRole (newRole);
     }
 
@@ -205,46 +224,54 @@ function RoleEdit ({match})
 
     async function handleSubmit (e)
     {
-        try
+        e.preventDefault ();
+        if (checkName (role.name))
         {
-            e.preventDefault ();
-            const _id = role._id;
-            const name = role.name;
-            const times = separate (role.times);
-            const owner = currentCentral._id;
             const response = await api.put
             (
                 "/roleidupdate",
                 {
-                    name,
-                    times,
-                    owner
+                    name: role.name,
+                    times: separate (role.times),
+                    owner: currentCentral._id
                 },
                 {
                     params:
                     {
-                        _id
+                        _id: role._id
                     }
                 }
             );
-            if (response.data !== null)
+            if (response.data === "")
             {
-                window.alert (`O papel ${role.name} foi atualizado.`);
+                setMessage (`Já existe um papel com o nome ${role.name}.`);
+            }
+            else
+            {
                 setUpdatedRole (role);
+                setMessage (`O papel ${role.name} foi atualizado.`);
             }
         }
-        catch (error)
+        else
         {
-            throw new Error(error);
+            setMessage ("Um ou mais campos são inválidos.");
         }
     }
 
-    function Times ()
-    {
-        if (role !== null && role !== undefined && role.hasOwnProperty ("times"))
-        {
-            return (
-                <div>
+    return (
+        <div className = "roleEditArea">
+            <form id = "roleEdit">
+                <div className = "nameInputGroup">
+                    <label htmlFor = "name">Nome</label>
+                    <input
+                        form = "roleEdit"
+                        placeholder = "Nome"
+                        className = "nameInput"
+                        value = {role.name || ""}
+                        style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeName (e)}}
+                    />
+                </div>
                 {
                     role.times.map
                     (
@@ -259,7 +286,7 @@ function RoleEdit ({match})
                                             form = "roleEdit"
                                             className = "TimeInput"
                                             value = {time.start || ""}
-                                            onChange = {(e) => handleChangeStart (index, e)}
+                                            onChange = {(e) => {handleChangeStart (index, e)}}
                                         />
                                         <div className = "space"></div>
                                         <label htmlFor = "Time">Final</label>
@@ -268,7 +295,7 @@ function RoleEdit ({match})
                                             form = "roleEdit"
                                             className = "TimeInput"
                                             value = {time.end || ""}
-                                            onChange = {(e) => handleChangeEnd (index, e)}
+                                            onChange = {(e) => {handleChangeEnd (index, e)}}
                                         />
                                     </div>
                                     <div className = "dayInputGroup" key = {index, "c"}>
@@ -278,7 +305,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[0] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 0)}
+                                            onClick = {() => {handleChangeDay (index, 0)}}
                                             />
                                         </div>
                                         <div className = "singleDay" key = {[index, 1]}>
@@ -286,7 +313,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[1] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 1)}
+                                            onClick = {() => {handleChangeDay (index, 1)}}
                                             />
                                         </div>
                                         <div className = "singleDay" key = {[index, 2]}>
@@ -294,7 +321,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[2] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 2)}
+                                            onClick = {() => {handleChangeDay (index, 2)}}
                                             />
                                         </div>
                                         <div className = "singleDay" key = {[index, 3]}>
@@ -302,7 +329,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[3] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 3)}
+                                            onClick = {() => {handleChangeDay (index, 3)}}
                                             />
                                         </div>
                                         <div className = "singleDay" key = {[index, 4]}>
@@ -310,7 +337,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[4] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 4)}
+                                            onClick = {() => {handleChangeDay (index, 4)}}
                                             />
                                         </div>
                                         <div className = "singleDay" key = {[index, 5]}>
@@ -318,7 +345,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[5] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 5)}
+                                            onClick = {() => {handleChangeDay (index, 5)}}
                                             />
                                         </div>
                                         <div className = "singleDay" key = {[index, 6]}>
@@ -326,7 +353,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.day[6] ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDay (index, 6)}
+                                            onClick = {() => {handleChangeDay (index, 6)}}
                                             />
                                         </div>
                                     </div>
@@ -336,7 +363,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.options.track ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeTrack (index)}
+                                            onClick = {() => {handleChangeTrack (index)}}
                                             >
                                                 <span className = "tooltiptext">Ao fim deste horário, para cada tranca afetada não acessada por cada usuário afetado, você será notificado.</span> 
                                             </div>
@@ -346,7 +373,7 @@ function RoleEdit ({match})
                                             <div
                                             className = "checkbox"
                                             style = {{backgroundColor: time.options.direct ? "#cccccc" : "#ffffff"}}
-                                            onClick = {() => handleChangeDirect (index)}
+                                            onClick = {() => {handleChangeDirect (index)}}
                                             >
                                                 <span className = "tooltiptext">Este horário só afetará trancas diretamente pertencentes a grupos com este papel.</span>
                                             </div>
@@ -354,7 +381,7 @@ function RoleEdit ({match})
                                         <button
                                         className = "buttonTimeRemove"
                                         type = "button"
-                                        onClick = {() => handleRemoveTime (index)}
+                                        onClick = {() => {handleRemoveTime (index)}}
                                         >
                                             X
                                         </button>
@@ -364,35 +391,10 @@ function RoleEdit ({match})
                         }
                     )
                 }
-                </div>
-            )
-        }
-        else
-        {
-            return <div/>
-        }
-    }
-
-    return (
-        <div className = "roleEditArea">
-            <form id = "roleEdit">
-                <div className = "nameInputGroup">
-                    <label htmlFor = "name">Nome</label>
-                    <input
-                        form = "roleEdit"
-                        placeholder = "Nome"
-                        className = "nameInput"
-                        value = {role.name || ""}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,} "
-                        required
-                    />
-                </div>
-                <Times/>
                 <button
                 className = "buttonTimeAdd"
                 type = "button"
-                onClick = {() => handleAddTime ()}
+                onClick = {() => {handleAddTime ()}}
                 >
                     Adicionar horário
                 </button>
@@ -400,7 +402,7 @@ function RoleEdit ({match})
                     <button
                     className = "buttonSubmit"
                     type = "submit"
-                    onClick = {(e) => handleSubmit (e)}
+                    onClick = {(e) => {handleSubmit (e)}}
                     >
                         Salvar
                     </button>

@@ -14,36 +14,77 @@ function CentralLogin ({match})
     const [registerPassword, setRegisterPassword] = useState ("");
     const [loginEmail, setLoginEmail] = useState ("");
     const [loginPassword, setLoginPassword] = useState ("");
-    const [message, setMessage] = useState (false);
-    const [goBack, setGoBack] = useState (false);
     const [registerShow, setRegisterShow] = useState (false);
     const [loginShow, setLoginShow] = useState (false);
+    const [registerMessage, setRegisterMessage] = useState ("");
+    const [loginMessage, setLoginMessage] = useState ("");
+    const [redirect, setRedirect] = useState (<div/>);
+    const [validName, setValidName] = useState (true);
+    const [validEmail, setValidEmail] = useState (true);
+    const [validPassword, setValidPassword] = useState (true);
 
-    function handleRegisterNameChange (e)
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
+
+    function checkEmail (email)
+    {
+        const regularExpression = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (regularExpression.test (String (email).toLowerCase ()))
+        {
+            setValidEmail (true);
+            return true;
+        }
+        setValidEmail (false);
+        return false;
+    }
+
+    function checkPassword (password)
+    {
+        if (password.length > 0)
+        {
+            setValidPassword (true);
+            return true;
+        }
+        setValidPassword (false);
+        return false;
+    }
+
+    function handleRegisterChangeName (e)
     {
         const value = e.target.value;
+        checkName (value);
         setRegisterName (value);
     }
 
-    function handleRegisterEmailChange (e)
+    function handleRegisterChangeEmail (e)
     {
         const value = e.target.value;
+        checkEmail (value);
         setRegisterEmail (value);
     }
 
-    function handleRegisterPasswordChange (e)
+    function handleRegisterChangePassword (e)
     {
         const value = e.target.value;
+        checkPassword (value);
         setRegisterPassword (value);
     }
 
-    function handleLoginEmailChange (e)
+    function handleLoginChangeEmail (e)
     {
         const value = e.target.value;
         setLoginEmail (value);
     }
 
-    function handleLoginPasswordChange (e)
+    function handleLoginChangePassword (e)
     {
         const value = e.target.value;
         setLoginPassword (value);
@@ -52,111 +93,82 @@ function CentralLogin ({match})
     async function handleRegister (e)
     {
         e.preventDefault ();
-        const name = registerName;
-        const email = registerEmail;
-        const password = registerPassword;
-        const response = await api.post
-        (
-            "/centralstore",
-            {
-                name,
-                email,
-                password
-            }
-        );
-        if (response.data === "")
+        if (checkName (registerName) && checkEmail (registerEmail) && checkPassword (registerPassword))
         {
-            window.alert ("Já existe uma conta com esse e-mail.");
+            const response = await api.post
+            (
+                "/centralstore",
+                {
+                    name: registerName,
+                    email: registerEmail,
+                    password: registerPassword
+                }
+            );
+            if (response.data === "")
+            {
+                setRegisterMessage ("Já existe uma conta com esse e-mail.");
+            }
+            else
+            {
+                await api.post
+                (
+                    "/groupstore",
+                    {
+                        name: "Raiz",
+                        owner: response.data._id
+                    }
+                );
+                setCurrentCentral (response.data);
+                setRedirect (<Redirect to = "/"/>);
+            }
         }
         else
         {
-            await api.post
-            (
-                "/groupstore",
-                {
-                    name: "Raiz",
-                    owner: response.data._id
-                }
-            );
-            window.alert ("Sua conta foi criada.");
-            setCurrentCentral (response.data);
-            setGoBack (true);
+            setRegisterMessage ("Um ou mais campos são inválidos.")
         }
     }
 
     async function handleLogin (e)
     {
         e.preventDefault ();
-        const email = loginEmail;
-        const password = loginPassword;
         const response = await api.get
         (
             "/centralloginindex",
             {
                 params:
                 {
-                    email,
-                    password
+                    email: loginEmail,
+                    password: loginPassword
                 }
             }
         );
         if (response.data === null)
         {
-            setMessage (true);
+            setLoginMessage ("E-mail ou senha está incorreto.");
         }
         else
         {
-            setMessage (false);
             setCurrentCentral (response.data);
-            setGoBack (true);
-        }
-    }
-
-    function GoBack ()
-    {
-        if (goBack === true)
-        {
-            return <Redirect to = ""/>
-        }
-        else
-        {
-            return <div/>
-        }
-    }
-
-    function Semispace ()
-    {
-        if (message === true)
-        {
-            return (
-                <div className = "semispace">
-                    E-mail ou senha está incorreto
-                </div>
-            )
-        }
-        else
-        {
-            return <div className = "semispace"/>
+            setRedirect (<Redirect to = "/"/>);
         }
     }
 
     return (
-        <>
-            <GoBack/>
-            <div className = "centralLoginArea">
-                <div className = "space"/>
+        <div className = "centralLoginArea">
+            <div className = "space"/>
+            <div>
                 <div className = "register">
+                    {redirect}
                     <form>
-                        <h1 className = "option">Registrar</h1>
+                        <div className = "option">Registrar</div>
                         <div className = "inputGroup">
                             <label>Nome</label>
                             <input
                             className = "registerInput registerNameInput"
                             placeholder = "Nome"
-                            onChange = {(e) => {handleRegisterNameChange (e)}}
                             value = {registerName}
-                            pattern = "/[A-Za-z0-9_]{3,}/"
-                            required
+                            style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                            onChange = {(e) => {handleRegisterChangeName (e)}}
                             />
                         </div>
                         <div className = "inputGroup">
@@ -164,10 +176,9 @@ function CentralLogin ({match})
                             <input
                             className = "registerInput registerEmailInput"
                             placeholder = "E-mail"
-                            onChange = {(e) => {handleRegisterEmailChange (e)}}
                             value = {registerEmail}
-                            type = "email"
-                            required
+                            style = {{borderColor: validEmail ? "#cccccc" : "#cc5151"}}
+                            onChange = {(e) => {handleRegisterChangeEmail (e)}}
                             />
                         </div>
                         <div className = "inputGroup inputGroupPassword">
@@ -175,15 +186,15 @@ function CentralLogin ({match})
                             <input
                             className = "registerInput passwordInput"
                             placeholder = "Senha"
-                            onChange = {(e) => {handleRegisterPasswordChange (e)}}
                             value = {registerPassword}
+                            style = {{borderColor: validPassword ? "#cccccc" : "#cc5151"}}
+                            onChange = {(e) => {handleRegisterChangePassword (e)}}
                             type = {registerShow ? "text" : "password"}
-                            pattern = "/{3,}/"
-                            required
                             />
                             <div className = "space"/>
                             <button
                             className = "buttonShow"
+                            type = "button"
                             onMouseDown = {() => {setRegisterShow (true)}}
                             onMouseUp = {() => {setRegisterShow (false)}}
                             >
@@ -201,18 +212,20 @@ function CentralLogin ({match})
                         </Link>
                     </form>
                 </div>
-                <div className = "space"/>
+                <div className = "message">{registerMessage}</div>
+            </div>
+            <div className = "space"/>
+            <div>
                 <div className = "login">
                     <form>
-                        <h1 className = "option">Login</h1>
+                        <div className = "option">Login</div>
                         <div className = "inputGroup">
                             <label>E-mail</label>
                             <input
                             className = "loginInput loginEmailInput"
                             placeholder = "E-mail"
-                            onChange = {(e) => {handleLoginEmailChange (e)}}
+                            onChange = {(e) => {handleLoginChangeEmail (e)}}
                             value = {loginEmail}
-                            type = "email"
                             />
                         </div>
                         <div className = "inputGroup inputGroupPassword">
@@ -220,20 +233,21 @@ function CentralLogin ({match})
                             <input
                             className = "loginInput passwordInput"
                             placeholder = "Senha"
-                            onChange = {(e) => {handleLoginPasswordChange (e)}}
+                            onChange = {(e) => {handleLoginChangePassword (e)}}
                             value = {loginPassword}
                             type = {loginShow ? "text" : "password"}
                             />
                             <div className = "space"/>
                             <button
                             className = "buttonShow"
+                            type = "button"
                             onMouseDown = {() => {setLoginShow (true)}}
                             onMouseUp = {() => {setLoginShow (false)}}
                             >
                                 Mostrar
                             </button>
                         </div>
-                        <Semispace/>
+                        <div className = "semispace"></div>
                         <Link to = {match.url.replace ("/login", "")}>
                             <button
                             className = "buttonLogin"
@@ -245,9 +259,10 @@ function CentralLogin ({match})
                         </Link>
                     </form>
                 </div>
-                <div className = "space"/>
+                <div className = "message">{loginMessage}</div>
             </div>
-        </>
+            <div className = "space"/>
+        </div>
     )
 }
 

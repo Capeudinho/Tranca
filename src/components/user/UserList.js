@@ -139,7 +139,7 @@ function UserList ()
                     />
                     <button className = "buttonSearch" onClick = {(e) => handleSubmit (e)}>Pesquisar</button>
                 </form>
-                <Link to = "users/adduser">
+                <Link to = "/users/adduser">
                     <button className = "buttonAdd buttonAddUser" type = "button">
                         Usuário
                     </button>

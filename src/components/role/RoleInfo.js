@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 import deletedRoleContext from "../context/deletedRoleContext";
 import updatedRoleContext from "../context/updatedRoleContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/role/roleInfo.css";
 
@@ -11,7 +12,15 @@ function RoleInfo ({match})
 {
     const {deletedRole, setDeletedRole} = useContext (deletedRoleContext);
     const {updatedRole, setUpdatedRole} = useContext (updatedRoleContext);
-    const [role, setRole] = useState ({});
+    const {message, setMessage} = useContext (messageContext);
+    const [role, setRole] = useState
+    (
+        {
+            name: ""
+        }
+    );
+    const [redirect, setRedirect] = useState (<div/>);
+    const [confirm, setConfirm] = useState (false);
 
     useEffect
     (
@@ -31,9 +40,9 @@ function RoleInfo ({match})
                         }
                     }
                 )
-                if (mounted)
+                if (mounted && response.data !== null)
                 {
-                setRole (response.data);
+                    setRole (response.data);
                 }
             }
             runEffect();
@@ -56,45 +65,51 @@ function RoleInfo ({match})
 
     async function handleDeleteRole (_id)
     {
-        if (window.confirm (`Você realmente deseja remover o papel ${role.name}?`))
-        {
-            const response = await api.delete
-            (
-                "/roleiddestroy",
-                {
-                    params:
-                    {
-                        _id
-                    }
-                }
-            );
-            if (response.data._id === _id)
+        const response = await api.delete
+        (
+            "/roleiddestroy",
             {
-                window.alert(`O papel ${role.name} foi excluído.`);
-                setDeletedRole (role);
+                params:
+                {
+                    _id
+                }
             }
+        );
+        if (response.data._id === _id)
+        {
+            setDeletedRole (role);
+            setMessage (`O papel ${role.name} foi excluído.`);
+            setRedirect (<Redirect to = {match.url.replace ("/"+role._id, "")}/>);
         }
     }
 
     return (
         <div className = "roleInfoArea">
+            {redirect}
             <div className = "name">{role.name}</div>
             <div className = "type">Papel</div>
             <Link to = {match.url.concat ("/edit")}>
-                <button
-                className = "buttonEdit"
-                >
-                    Editar
-                </button>
+                <button className = "buttonEdit">Editar</button>
             </Link>
-            <Link to = {match.url.replace ("/"+role._id, "")}>
-                <button
-                className = "buttonDelete"
-                onClick = {() => handleDeleteRole (role._id)}
-                >
-                    Excluir
-                </button>
-            </Link>
+            <button
+            className = "buttonDelete"
+            onClick =
+            {
+                () =>
+                {
+                    if (confirm)
+                    {
+                        handleDeleteRole (role._id);
+                    }
+                    else
+                    {
+                        setConfirm (true);
+                    }
+                }
+            }
+            >
+                {confirm ? "Confirmar exclusão" : "Excluir"}
+            </button>
         </div>
     )
 }

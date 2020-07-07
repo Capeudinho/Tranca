@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import io from "socket.io-client";
 
 import currentCentralContext from "../context/currentCentralContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/base/baseLeft.css";
 
@@ -11,6 +12,7 @@ const socket = io ("http://localhost:3001", {transports: ["websocket", "polling"
 function BaseLeft ()
 {
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
+    const {message, setMessage} = useContext (messageContext);
     const [normalEntry, setNormalEntry] = useState (0);
     const [warningEntry, setWarningEntry] = useState (0);
 
@@ -20,15 +22,7 @@ function BaseLeft ()
         {
             let mounted = true;
             
-
-            socket.on
-            (
-                "connect",
-                () =>
-                {
-                    console.log ("Conectou");
-                }
-            );
+            socket.on ("connect", () => {});
 
             socket.on
             (
@@ -45,7 +39,6 @@ function BaseLeft ()
                         {
                             setWarningEntry (warningEntry+1);
                         }
-                        console.log ("Recebeu");
                     }
                 }
             );
@@ -90,6 +83,21 @@ function BaseLeft ()
                 <Link to = "/menu">
                     <button className = "buttonList buttonListOther">Menu</button>
                 </Link>
+            </div>
+            <div
+            style = {{display: message.length > 0 ? "block" : "none"}}
+            >
+                <div
+                className = "message"
+                >
+                    {message}
+                </div>
+                <button
+                className = "buttonList buttonListOther"
+                onClick = {() => {setMessage ("")}}
+                >
+                    Fechar
+                </button>
             </div>
         </div>
     )

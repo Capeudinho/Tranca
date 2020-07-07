@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 import deletedGroupsContext from "../context/deletedGroupsContext";
 import updatedGroupContext from "../context/updatedGroupContext";
 import deletedLockContext from "../context/deletedLockContext";
 import updatedLockContext from "../context/updatedLockContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/group/groupInfo.css";
 
@@ -15,7 +16,10 @@ function GroupInfo ({match})
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
     const {deletedLock, setDeletedLock} = useContext (deletedLockContext);
     const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
+    const {message, setMessage} = useContext (messageContext);
     const [group, setGroup] = useState ({});
+    const [redirect, setRedirect] = useState (<div/>);
+    const [confirm, setConfirm] = useState (false);
 
     useEffect
     (
@@ -35,7 +39,7 @@ function GroupInfo ({match})
                         }
                     }
                 );
-                if (mounted)
+                if (mounted && response.data !== null)
                 {
                     setGroup (response.data);
                 }
@@ -74,87 +78,75 @@ function GroupInfo ({match})
     {
         if (group.hasOwnProperty ("content") && group.holder.length !== 0)
         {
-            if (window.confirm (`Você realmente deseja remover o grupo ${group.name}?`))
-            {
-                const response = await api.delete
-                (
-                    "/groupiddestroy",
-                    {
-                        params:
-                        {
-                            _id
-                        }
-                    }
-                );
-                if (response.data.group._id === _id)
+            const response = await api.delete
+            (
+                "/groupiddestroy",
                 {
-                    window.alert(`O grupo ${group.name} foi excluído.`);
-                    setDeletedGroups (response.data);
+                    params:
+                    {
+                        _id
+                    }
                 }
+            );
+            if (response.data.group._id === _id)
+            {
+                setDeletedGroups (response.data);
+                setRedirect (<Redirect to = {match.url.replace ("/"+group._id, "")}/>);
+                setMessage (`O grupo ${group.name} foi excluído.`);
             }
         }
         else if (group.hasOwnProperty ("content") && group.holder.length === 0)
         {
-            window.alert(`Você não pode excluir esse grupo.`);
+            setMessage ("Você não pode excluir esse grupo.");
         }
         else
         {
-            if (window.confirm (`Você realmente deseja remover a tranca ${group.name}?`))
-            {
-                const response = await api.delete
-                (
-                    "/lockiddestroy",
-                    {
-                        params:
-                        {
-                            _id
-                        }
-                    }
-                );
-                if (response.data._id === _id)
+            const response = await api.delete
+            (
+                "/lockiddestroy",
                 {
-                    window.alert(`A tranca ${group.name} foi excluída.`);
-                    setDeletedLock (response.data);
+                    params:
+                    {
+                        _id
+                    }
                 }
+            );
+            if (response.data.lock._id === _id)
+            {
+                setDeletedLock (response.data);
+                setRedirect (<Redirect to = {match.url.replace ("/"+group._id, "")}/>);
+                setMessage (`A tranca ${group.name} foi excluída.`);
             }
-        }
-    }
-
-    function TypeAttributes ()
-    {
-        if (group.hasOwnProperty ("content"))
-        {
-            return (
-                <div className = "type">Grupo</div>
-            )
-        }
-        else
-        {
-            return (
-                <div className = "type">Tranca</div>
-            )
         }
     }
 
     return (
         <div className = "groupInfoArea">
+            {redirect}
             <div className = "name">{group.name}</div>
-            <TypeAttributes/>
+            <div className = "type">{group.hasOwnProperty ("content") ? "Grupo" : "Tranca"}</div>
             <Link to = {match.url.concat ("/edit")}>
-                <button
-                className = "buttonEdit"
-                >
-                    Editar
-                </button>
+                <button className = "buttonEdit">Editar</button>
             </Link>
-            <Link to = {match.url.replace ("/group/"+group._id, "")}>
-                <button
-                className = "buttonDelete"
-                onClick = {() => handleDeleteGroup (group._id)}
-                >
-                    Excluir
-                </button>
-            </Link>
+            <button
+            className = "buttonDelete"
+            onClick =
+            {
+                () =>
+                {
+                    if (confirm)
+                    {
+                        handleDeleteGroup (group._id);
+                    }
+                    else
+                    {
+                        setConfirm (true);
+                    }
+                }
+            }
+            >
+                {confirm ? "Confirmar exclusão" : "Excluir"}
+            </button>
         </div>
     )
 }

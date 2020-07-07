@@ -4,6 +4,7 @@ import api from "../../services/api";
 import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import addedGroupContext from "../context/addedGroupContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/group/groupAdd.css";
 
@@ -12,12 +13,26 @@ function GroupAdd ({match})
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {addedGroup, setAddedGroup} = useContext (addedGroupContext);
+    const {message, setMessage} = useContext (messageContext);
     const [name, setName] = useState ("");
     const [roles, setRoles] = useState ([]);
+    const [validName, setValidName] = useState (true);
+
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
     
     function handleChangeName (e)
     {
         const value = e.target.value;
+        checkName (value);
         setName (value);
     }
 
@@ -41,7 +56,7 @@ function GroupAdd ({match})
     {
         if (allRoles.length === 0)
         {
-            window.alert ("Você não possui papéis criados.");
+            setMessage ("Você não possui papéis criados.");
         }
         else
         {
@@ -62,27 +77,31 @@ function GroupAdd ({match})
     async function handleSubmit (e)
     {
         e.preventDefault ();
-        const _id = match.params.id;
-        const owner = currentCentral._id;
-        const response = await api.post
-        (
-            "/groupstore",
-            {
-                name,
-                roles,
-                _id,
-                owner
-            }
-        );
-        if (response.data === "")
+        if (checkName (name))
         {
-            window.alert("Já existe um grupo com esse nome.");
+            const response = await api.post
+            (
+                "/groupstore",
+                {
+                    name,
+                    roles,
+                    _id: match.params.id,
+                    owner: currentCentral._id
+                }
+            );
+            if (response.data.hasOwnProperty ("newGroup") === false)
+            {
+                setMessage (`Já existe um grupo com o nome ${name}.`);
+            }
+            else
+            {
+                setAddedGroup (response.data);
+                setMessage (`O grupo ${name} foi criado.`);
+            }
         }
         else
         {
-            window.alert(`O grupo ${name} foi criado.`);
-            document.getElementById ("groupAdd").reset();
-            setAddedGroup (response.data);
+            setMessage ("Um ou mais campos são inválidos.");
         }
     }
 
@@ -96,9 +115,8 @@ function GroupAdd ({match})
                         placeholder = "Nome"
                         className = "nameInput"
                         value = {name}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,}"
-                        required
+                        style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeName (e)}}
                     />
                 </div>
                 <div className = "roleInputGroup">
@@ -113,7 +131,7 @@ function GroupAdd ({match})
                                     <select
                                     className = "roleSelect"
                                     value = {role.name}
-                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    onChange = {(e) => {handleChangeRole (index, e)}}
                                     >
                                         {
                                             allRoles.map
@@ -136,7 +154,7 @@ function GroupAdd ({match})
                                     <button
                                     className = "buttonRoleRemove"
                                     type = "button"
-                                    onClick = {() => handleRemoveRole (index)}
+                                    onClick = {() => {handleRemoveRole (index)}}
                                     >
                                         X
                                     </button>

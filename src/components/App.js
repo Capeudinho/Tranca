@@ -35,6 +35,7 @@ import ActivityInfo from "./activity/ActivityInfo";
 
 import currentCentralContext from "./context/currentCentralContext";
 import allRolesContext from "./context/allRolesContext";
+import messageContext from "./context/messageContext";
 import groupPathContext from "./context/groupPathContext";
 import deletedUserContext from "./context/deletedUserContext";
 import updatedUserContext from "./context/updatedUserContext";
@@ -53,6 +54,7 @@ function App ()
 {
   const [currentCentral, setCurrentCentral] = useState ({});
   const [allRoles, setAllRoles] = useState ([]);
+  const [message, setMessage] = useState ("");
   const [groupPath, setGroupPath] = useState ("");
   const [deletedUser, setDeletedUser] = useState ([]);
   const [updatedUser, setUpdatedUser] = useState ([]);
@@ -101,9 +103,7 @@ function App ()
     }
     else
     {
-      return (
-        <Redirect to = "/login"/>
-      )
+      return <Redirect to = "/login"/>
     }
   }
 
@@ -113,6 +113,7 @@ function App ()
         <Route path = "/" component = {Login}/>
         
         <currentCentralContext.Provider value = {{currentCentral, setCurrentCentral}}>
+        <messageContext.Provider value = {{message, setMessage}}>
           <Switch>
 
             <Route path = "/login" component = {CentralLogin}/>
@@ -226,6 +227,7 @@ function App ()
               </div>
             </>
           </Switch>
+        </messageContext.Provider>
         </currentCentralContext.Provider>
       </div>
     </BrowserRouter>

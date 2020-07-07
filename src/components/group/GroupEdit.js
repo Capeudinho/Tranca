@@ -2,17 +2,21 @@ import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
 import {Link} from "react-router-dom";
 
+import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import updatedGroupContext from "../context/updatedGroupContext";
 import updatedLockContext from "../context/updatedLockContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/group/groupEdit.css";
 
 function GroupEdit ({match})
 {
+    const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
     const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
+    const {message, setMessage} = useContext (messageContext);
     const [group, setGroup] = useState
     (
         {
@@ -21,7 +25,7 @@ function GroupEdit ({match})
         }
     );
     const [roles, setRoles] = useState ([]);
-    const [update, setUpdate] = useState (0);
+    const [validName, setValidName] = useState (true);
 
     useEffect
     (
@@ -43,7 +47,6 @@ function GroupEdit ({match})
                 );
                 if (mounted)
                 {
-                    setGroup (response.data);
                     if (response.data.hasOwnProperty ("content"))
                     {
                         for (var k = 0; k < response.data.roles.length; k++)
@@ -59,19 +62,31 @@ function GroupEdit ({match})
                             }
                         }
                     }
-                    setUpdate (update+1);
+                    setGroup (response.data);
                 }
             }
             runEffect();
             return (() => {mounted = false;});
         },
         [match.params.id]
-    )
+    );
+
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
 
     function handleChangeName (e)
     {
         var newGroup = Object.assign ({}, group);
         newGroup.name = e.target.value;
+        checkName (e.target.value);
         setGroup (newGroup);
     }
 
@@ -100,7 +115,7 @@ function GroupEdit ({match})
     {
         if (allRoles.length === 0)
         {
-            window.alert ("Você não possui papéis criados.");
+            setMessage ("Você não possui papéis criados.");
         }
         else
         {
@@ -129,44 +144,47 @@ function GroupEdit ({match})
 
     async function handleSubmit (e)
     {
-        try
+        e.preventDefault ();
+        if (checkName (group.name))
         {
             if (group.hasOwnProperty ("content"))
             {
-                e.preventDefault ();
-                const _id = group._id;
-                const name = group.name;
-                const roles = group.roles;
                 const response = await api.put
                 (
                     "/groupidupdatesimp",
                     {
-                        name,
-                        roles
+                        name: group.name,
+                        roles: group.roles,
+                        owner: currentCentral._id
                     },
                     {
                         params:
                         {
-                            _id
+                            _id: group._id
                         }
                     }
                 );
-                if (response.data !== null)
+                if (response.data === "")
                 {
-                    window.alert(`O grupo ${group.name} foi atualizado.`);
+                    setMessage (`Já existe um grupo com o nome ${group.name}.`);
+                }
+                else
+                {
                     setUpdatedGroup (group);
+                    setMessage (`O grupo ${group.name} foi atualizado.`);
                 }
             }
             else
             {
-                e.preventDefault ();
                 const _id = group._id;
                 const name = group.name;
+                const owner = currentCentral._id;
                 const response = await api.put
                 (
                     "/lockidupdatesimp",
                     {
-                        name
+                        name,
+                        owner
                     },
                     {
                         params:
@@ -175,16 +193,20 @@ function GroupEdit ({match})
                         }
                     }
                 );
-                if (response.data !== null)
+                if (response.data === "")
                 {
-                    window.alert(`A tranca ${group.name} foi atualizada.`);
+                    setMessage (`Já existe uma tranca com o nome ${group.name}.`);
+                }
+                else
+                {
                     setUpdatedLock (group);
+                    setMessage (`A tranca ${group.name} foi atualizada.`);
                 }
             }
         }
-        catch (error)
+        else
         {
-            throw new Error(error);
+
         }
     }
 
@@ -198,9 +220,8 @@ function GroupEdit ({match})
                         placeholder = "Nome"
                         className = "nameInput"
                         value = {group.name}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,} "
-                        required
+                        style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeName (e)}}
                     />
                 </div>
                 {
@@ -214,7 +235,7 @@ function GroupEdit ({match})
                                     <select
                                     className = "roleSelect"
                                     value = {role.name}
-                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    onChange = {(e) => {handleChangeRole (index, e)}}
                                     >
                                         {
                                             allRoles.map
@@ -249,7 +270,8 @@ function GroupEdit ({match})
                 <button
                 className = "buttonRoleAdd"
                 type = "button"
-                onClick = {() => handleAddRole ()}
+                style = {{display: group.hasOwnProperty ("content") ? "block" : "none"}}
+                onClick = {() => {handleAddRole ()}}
                 >
                     Adicionar papel
                 </button>
@@ -257,7 +279,7 @@ function GroupEdit ({match})
                     <button
                     className = "buttonSubmit"
                     type = "submit"
-                    onClick = {(e) => handleSubmit (e)}
+                    onClick = {(e) => {handleSubmit (e)}}
                     >
                         Salvar
                     </button>

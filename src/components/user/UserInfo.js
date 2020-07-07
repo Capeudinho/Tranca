@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 import deletedUserContext from "../context/deletedUserContext";
 import updatedUserContext from "../context/updatedUserContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/user/userInfo.css";
 
@@ -11,6 +12,7 @@ function UserInfo ({match})
 {
     const {deletedUser, setDeletedUser} = useContext (deletedUserContext);
     const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
+    const {message, setMessage} = useContext (messageContext);
     const [user, setUser] = useState
     (
         {
@@ -18,6 +20,8 @@ function UserInfo ({match})
             email: "",
         }
     );
+    const [redirect, setRedirect] = useState (<div/>);
+    const [confirm, setConfirm] = useState (false);
     const [update, setUpdate] = useState (0);
 
 
@@ -39,7 +43,7 @@ function UserInfo ({match})
                         }
                     }
                 );
-                if (mounted)
+                if (mounted && response.data !== null)
                 {
                     setUser (response.data);
                     setUpdate (update+1);
@@ -57,7 +61,7 @@ function UserInfo ({match})
         {
             if (updatedUser !== {} && user._id === updatedUser._id)
             {
-                setUser(updatedUser);
+                setUser (updatedUser);
             }
         },
         [updatedUser]
@@ -65,61 +69,51 @@ function UserInfo ({match})
 
     async function handleDeleteUser (_id)
     {
-        if (window.confirm (`Você realmente deseja remover o usuário ${user.name}?`))
-        {
-            const response = await api.delete
-            (
-                "/useriddestroy",
-                {
-                    params:
-                    {
-                        _id
-                    }
-                }
-            );
-            if (response.data._id === _id)
+        const response = await api.delete
+        (
+            "/useriddestroy",
             {
-                window.alert(`O usuário ${user.name} foi excluído.`);
-                setDeletedUser (user);
+                params:
+                {
+                    _id
+                }
             }
-        }
-    }
-
-    function OtherAttributes ()
-    {
-        if (user !== null && user !== undefined && user.hasOwnProperty ("name") && user.hasOwnProperty ("email"))
+        );
+        if (response.data._id === _id)
         {
-            return (
-                <div>
-                    <div className = "name">{user.name}</div>
-                    <div className = "type">Usuário</div>
-                </div>
-            )
-        }
-        else
-        {
-            return <div/>
+            setDeletedUser (user);
+            setMessage (`O usuário ${user.name} foi excluído.`);
+            setRedirect (<Redirect to = {match.url.replace ("/"+user._id, "")}/>);
         }
     }
 
     return (
         <div className = "userInfoArea">
-            <OtherAttributes/>
+            {redirect}
+            <div className = "name">{user.name}</div>
+            <div className = "type">Usuário</div>
             <Link to = {match.url.concat ("/edit")}>
-                <button
-                className = "buttonEdit"
-                >
-                    Editar
-                </button>
+                <button className = "buttonEdit">Editar</button>
             </Link>
-            <Link to = {match.url.replace ("/"+user._id, "")}>
-                <button
-                className = "buttonDelete"
-                onClick = {() => handleDeleteUser (user._id)}
-                >
-                    Excluir
-                </button>
-            </Link>
+            <button
+            className = "buttonDelete"
+            onClick =
+            {
+                () =>
+                {
+                    if (confirm)
+                    {
+                        handleDeleteUser (user._id);
+                    }
+                    else
+                    {
+                        setConfirm (true);
+                    }
+                }
+            }
+            >
+                {confirm ? "Confirmar exclusão" : "Excluir"}
+            </button>
         </div>
     )
 }

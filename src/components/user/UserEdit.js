@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import updatedUserContext from "../context/updatedUserContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/user/userEdit.css";
 
@@ -12,6 +13,7 @@ function UserEdit ({match})
 {
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
+    const {message, setMessage} = useContext (messageContext);
     const {updatedUser, setUpdatedUser} = useContext (updatedUserContext);
     const [user, setUser] = useState
     (
@@ -23,7 +25,8 @@ function UserEdit ({match})
         }
     );
     const [roles, setRoles] = useState ([]);
-    const [update, setUpdate] = useState (0);
+    const [validName, setValidName] = useState (true);
+    const [validEmail, setValidEmail] = useState (true);
 
     useEffect
     (
@@ -43,34 +46,57 @@ function UserEdit ({match})
                         }
                     }
                 );
-                for (var k = 0; k < response.data.roles.length; k++)
-                {
-                    for (var j = 0; j < allRoles.length; j++)
-                    {
-                        if (response.data.roles[k] === allRoles[j]._id)
-                        {
-                            var tempRoles = roles;
-                            tempRoles.push (allRoles[j]);
-                            setRoles (tempRoles);
-                        }
-                    }
-                }
                 if (mounted)
                 {
+                    for (var k = 0; k < response.data.roles.length; k++)
+                    {
+                        for (var j = 0; j < allRoles.length; j++)
+                        {
+                            if (response.data.roles[k] === allRoles[j]._id)
+                            {
+                                var tempRoles = roles;
+                                tempRoles.push (allRoles[j]);
+                                setRoles (tempRoles);
+                            }
+                        }
+                    }
                     setUser (response.data);
-                    setUpdate (update+1);
                 }
             }
             runEffect();
             return (() => {mounted = false;});
         },
         [match.params.id]
-    )
+    );
+
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
+
+    function checkEmail (email)
+    {
+        const regularExpression = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (regularExpression.test (String (email).toLowerCase ()))
+        {
+            setValidEmail (true);
+            return true;
+        }
+        setValidEmail (false);
+        return false;
+    }
 
     function handleChangeName (e)
     {
         var newUser = Object.assign ({}, user);
         newUser.name = e.target.value;
+        checkName (e.target.value);
         setUser (newUser);
     }
 
@@ -78,6 +104,7 @@ function UserEdit ({match})
     {
         var newUser = Object.assign ({}, user);
         newUser.email = e.target.value;
+        checkEmail (e.target.value);
         setUser (newUser);
     }
 
@@ -133,7 +160,7 @@ function UserEdit ({match})
     {
         if (allRoles.length === 0)
         {
-            window.alert ("Você não possui papéis criados.");
+            setMessage ("Você não possui papéis criados.");
         }
         else
         {
@@ -162,41 +189,39 @@ function UserEdit ({match})
 
     async function handleSubmit (e)
     {
-        try
+        e.preventDefault ();
+        if (checkName (user.name) && checkEmail (user.email))
         {
-            e.preventDefault ();
-            const _id = user._id;
-            const name = user.name;
-            const email = user.email;
-            const MACs = user.MACs;
-            const roles = user.roles;
-            const owner = currentCentral._id;
             const response = await api.put
             (
                 "/useridupdate",
                 {
-                    name,
-                    email,
-                    MACs,
-                    roles,
-                    owner
+                    name: user.name,
+                    email: user.email,
+                    MACs: user.MACs,
+                    roles: user.roles,
+                    owner: currentCentral._id
                 },
                 {
                     params:
                     {
-                        _id
+                        _id: user._id
                     }
                 }
             );
-            if (response.data !== null)
+            if (response.data === "")
             {
-                window.alert(`O usuário ${user.name} foi atualizado.`);
+                setMessage (`Já existe um usuário com o nome ${user.name}.`);
+            }
+            else
+            {
                 setUpdatedUser (user);
+                setMessage (`O usuário ${user.name} foi atualizado.`);
             }
         }
-        catch (error)
+        else
         {
-            throw new Error(error);
+            setMessage ("Um ou mais campos são inválidos.");
         }
     }
 
@@ -210,9 +235,8 @@ function UserEdit ({match})
                         placeholder = "Nome"
                         className = "nameInput"
                         value = {user.name}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,} "
-                        required
+                        style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeName (e)}}
                     />
                 </div>
                 <div className = "emailInputGroup">
@@ -222,9 +246,8 @@ function UserEdit ({match})
                         placeholder = "E-mail"
                         className = "emailInput"
                         value = {user.email}
-                        onChange = {(e) => handleChangeEmail (e)}
-                        type = "email"
-                        required
+                        style = {{borderColor: validEmail ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeEmail (e)}}
                    />
                 </div>
                 {
@@ -240,12 +263,12 @@ function UserEdit ({match})
                                         className = "MACInput"
                                         value = {MAC || ""}
                                         placeholder = "MAC"
-                                        onChange = {(e) => handleChangeMAC (index, e)}
+                                        onChange = {(e) => {handleChangeMAC (index, e)}}
                                     />
                                     <button
                                     className = "buttonMACRemove"
                                     type = "button"
-                                    onClick = {() => handleRemoveMAC (index)}
+                                    onClick = {() => {handleRemoveMAC (index)}}
                                     >
                                         X
                                     </button>
@@ -265,7 +288,7 @@ function UserEdit ({match})
                                     <select
                                     className = "roleSelect"
                                     value = {role.name}
-                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    onChange = {(e) => {handleChangeRole (index, e)}}
                                     >
                                         {
                                             allRoles.map
@@ -288,7 +311,7 @@ function UserEdit ({match})
                                     <button
                                     className = "buttonRoleRemove"
                                     type = "button"
-                                    onClick = {() => handleRemoveRole (index)}
+                                    onClick = {() => {handleRemoveRole (index)}}
                                     >
                                         X
                                     </button>
@@ -301,14 +324,14 @@ function UserEdit ({match})
                     <button
                     className = "buttonMACAdd"
                     type = "button"
-                    onClick = {() => handleAddMAC ()}
+                    onClick = {() => {handleAddMAC ()}}
                     >
                         Adicionar MAC
                     </button>
                     <button
                     className = "buttonRoleAdd"
                     type = "button"
-                    onClick = {() => handleAddRole ()}
+                    onClick = {() => {handleAddRole ()}}
                     >
                         Adicionar papel
                     </button>
@@ -317,7 +340,7 @@ function UserEdit ({match})
                     <button
                     className = "buttonSubmit"
                     type = "submit"
-                    onClick = {(e) => handleSubmit (e)}
+                    onClick = {(e) => {handleSubmit (e)}}
                     >
                         Salvar
                     </button>

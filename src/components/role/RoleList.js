@@ -139,7 +139,7 @@ function RoleList ()
                     />
                     <button className = "buttonSearch" onClick = {(e) => handleSubmit (e)}>Pesquisar</button>
                 </form>
-                <Link to = "roles/addrole">
+                <Link to = "/roles/addrole">
                     <button className = "buttonAdd buttonAddRole">
                         Papel
                     </button>

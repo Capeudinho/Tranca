@@ -96,3 +96,12 @@
     border-color: #cc5151;
     color: #cc5151;
 }
+
+.baseLeftArea .message
+{
+    font-size: 14px;
+    padding-top: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-top: solid 1px #cccccc;
+}

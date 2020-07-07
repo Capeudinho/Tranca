@@ -1,14 +1,16 @@
 import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
-import {Link} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 
 import currentCentralContext from "../context/currentCentralContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/central/centralMenu.css";
 
 function CentralMenu ()
 {
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
+    const {message, setMessage} = useContext (messageContext);
     const [show, setShow] = useState (false);
     const [newCentral, setNewCentral] = useState
     (
@@ -18,6 +20,11 @@ function CentralMenu ()
             password: ""
         }
     );
+    const [redirect, setRedirect] = useState (<div/>);
+    const [confirm, setConfirm] = useState (false);
+    const [validName, setValidName] = useState (true);
+    const [validEmail, setValidEmail] = useState (true);
+    const [validPassword, setValidPassword] = useState (true);
 
     useEffect
     (
@@ -26,85 +33,118 @@ function CentralMenu ()
             setNewCentral (currentCentral);
         },
         []
-    )
+    );
 
-    function handleNameChange (e)
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
+
+    function checkEmail (email)
+    {
+        const regularExpression = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (regularExpression.test (String (email).toLowerCase ()))
+        {
+            setValidEmail (true);
+            return true;
+        }
+        setValidEmail (false);
+        return false;
+    }
+
+    function checkPassword (password)
+    {
+        if (password.length > 0)
+        {
+            setValidPassword (true);
+            return true;
+        }
+        setValidPassword (false);
+        return false;
+    }
+
+    function handleChangeName (e)
     {
         var tempCentral = Object.assign ({}, newCentral);
         tempCentral.name = e.target.value;
+        checkName (e.target.value);
         setNewCentral (tempCentral);
     }
 
-    function handleEmailChange (e)
+    function handleChangeEmail (e)
     {
         var tempCentral = Object.assign ({}, newCentral);
         tempCentral.email = e.target.value;
+        checkEmail (e.target.value);
         setNewCentral (tempCentral);
     }
 
-    function handlePasswordChange (e)
+    function handleChangePassword (e)
     {
         var tempCentral = Object.assign ({}, newCentral);
         tempCentral.password = e.target.value;
+        checkPassword (e.target.value);
         setNewCentral (tempCentral);
     }
 
     async function handleSubmit (e)
     {
-        try
+        e.preventDefault ();
+        if (checkName (newCentral.name) && checkEmail (newCentral.email) && checkPassword (newCentral.password))
         {
-            e.preventDefault ();
-            const _id = newCentral._id;
-            const name = newCentral.name;
-            const email = newCentral.email;
-            const password = newCentral.password;
             const response = await api.put
             (
                 "/centralidupdate",
                 {
-                    name,
-                    email,
-                    password
+                    name: newCentral.name,
+                    email: newCentral.email,
+                    password: newCentral.password
                 },
                 {
                     params:
                     {
-                        _id
+                        _id:newCentral._id
                     }
                 }
             );
-            if (response.data !== null)
+            if (response.data === "")
             {
-                window.alert("A sua conta foi atualizada.");
+                setMessage ("Já existe uma conta com esse e-mail.")
+            }
+            else
+            {
                 setCurrentCentral (response.data);
+                setMessage ("Sua conta foi atualizada.");
             }
         }
-        catch (error)
+        else
         {
-            throw new Error(error);
+            setMessage ("Um ou mais campos são inválidos.");
         }
     }
 
-    async function handleDelete (_id)
+    async function handleDelete ()
     {
-        if (window.confirm ("Você realmente deseja excluir sua conta?"))
-        {
-            const _id = newCentral._id;
-            const response = await api.delete
-            (
-                "/centraliddestroy",
-                {
-                    params:
-                    {
-                        _id
-                    }
-                }
-            );
-            if (response.data._id === _id)
+        const _id = newCentral._id;
+        const response = await api.delete
+        (
+            "/centraliddestroy",
             {
-                window.alert("Sua conta foi excluída.");
-                setCurrentCentral ({});
+                params:
+                {
+                    _id
+                }
             }
+        );
+        if (response.data._id === _id)
+        {
+            setRedirect (<Redirect to = "/login"/>);
         }
     }
 
@@ -116,10 +156,9 @@ function CentralMenu ()
                     <input
                     className = "nameInput"
                     placeholder = "Nome"
-                    onChange = {(e) => {handleNameChange (e)}}
                     value = {newCentral.name}
-                    pattern = "/[A-Za-z0-9_]{3,}/"
-                    required
+                    style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                    onChange = {(e) => {handleChangeName (e)}}
                     />
                 </div>
                 <div className = "inputGroup">
@@ -127,10 +166,9 @@ function CentralMenu ()
                     <input
                     className = "emailInput"
                     placeholder = "E-mail"
-                    onChange = {(e) => {handleEmailChange (e)}}
                     value = {newCentral.email}
-                    type = "email"
-                    required
+                    style = {{borderColor: validEmail ? "#cccccc" : "#cc5151"}}
+                    onChange = {(e) => {handleChangeEmail (e)}}
                     />
                 </div>
                 <div className = "inputGroup inputGroupPassword">
@@ -138,14 +176,14 @@ function CentralMenu ()
                     <input
                     className = "registerInput registerPasswordInput"
                     placeholder = "Senha"
-                    onChange = {(e) => {handlePasswordChange (e)}}
                     value = {newCentral.password}
+                    style = {{borderColor: validPassword ? "#cccccc" : "#cc5151"}}
+                    onChange = {(e) => {handleChangePassword (e)}}
                     type = {show ? "text" : "password"}
-                    pattern = "/{3,}/"
-                    required
                     />
                     <button
                     className = "buttonShow"
+                    type = "button"
                     onMouseDown = {() => {setShow (true)}}
                     onMouseUp = {() => {setShow (false)}}
                     >
@@ -156,22 +194,34 @@ function CentralMenu ()
                     <button
                     className = "buttonSubmit"
                     type = "submit"
-                    onClick = {(e) => handleSubmit (e)}
+                    onClick = {(e) => {handleSubmit (e)}}
                     >
                         Salvar
                     </button>
-                    <Link to = "/login">
-                        <button
-                        className = "buttonDelete"
-                        type = "button"
-                        onClick = {(e) => handleDelete (e)}
-                        >
-                            Excluir conta
-                        </button>
-                    </Link>
+                    <button
+                    className = "buttonDelete"
+                    type = "button"
+                    onClick =
+                    {
+                        () =>
+                        {
+                            if (confirm)
+                            {
+                                handleDelete ();
+                            }
+                            else
+                            {
+                                setConfirm (true);
+                            }
+                        }
+                    }
+                    >
+                        {confirm ? "Confirmar exclusão" : "Excluir"}
+                    </button>
                 </div>
             </form>
-            <div className = "space"/>
+            
+            {redirect}
         </div>
     )
 }

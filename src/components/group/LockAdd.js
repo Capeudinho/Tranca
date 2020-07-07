@@ -3,6 +3,7 @@ import api from "../../services/api";
 
 import currentCentralContext from "../context/currentCentralContext";
 import addedLockContext from "../context/addedLockContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/group/lockAdd.css";
 
@@ -11,37 +12,55 @@ function LockAdd ({match})
     
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {addedLock, setAddedLock} = useContext (addedLockContext);
+    const {message, setMessage} = useContext (messageContext);
     const [name, setName] = useState ("");
+    const [validName, setValidName] = useState (true);
+
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
     
     function handleChangeName (e)
     {
         const value = e.target.value;
+        checkName (value);
         setName (value);
     }
 
     async function handleSubmit (e)
     {
         e.preventDefault ();
-        const _id = match.params.id;
-        const owner = currentCentral._id;
-        const response = await api.post
-        (
-            "/lockstore",
-            {
-                name,
-                _id,
-                owner
-            }
-        );
-        if (response.data === "")
+        if (checkName (name))
         {
-            window.alert("Já existe uma tranca com esse nome.");
+            const response = await api.post
+            (
+                "/lockstore",
+                {
+                    name,
+                    _id: match.params.id,
+                    owner: currentCentral._id
+                }
+            );
+            if (response.data.hasOwnProperty ("newLock") === false)
+            {
+                setMessage (`Já existe uma tranca com o nome ${name}.`);
+            }
+            else
+            {
+                setAddedLock (response.data);
+                setMessage (`A tranca ${name} foi criada.`);
+            }
         }
         else
         {
-            window.alert(`A tranca ${name} foi criada.`);
-            document.getElementById ("lockAdd").reset();
-            setAddedLock (response.data);
+            setMessage ("Um ou mais campos são inválidos.");
         }
     }
 
@@ -55,9 +74,7 @@ function LockAdd ({match})
                         placeholder = "Nome"
                         className = "nameInput"
                         value = {name}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,}"
-                        required
+                        style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
                     />
                 </div>
                 <button

@@ -64,21 +64,21 @@ function GroupExplorer (props)
             if (deletedGroups.hasOwnProperty ("group"))
             {
                 var newGroups = groups;
-                for (var k = 0; k < groups.length; k++)
+                for (var k = 0; k < newGroups.length; k++)
                 {
                     var goBack = false;
-                    if (k < groups.length && groups[k]._id === deletedGroups.group._id)
+                    if (newGroups[k]._id === deletedGroups.group._id)
                     {
                         newGroups.splice (k, 1);
                         goBack = true;
                     }
-                    else if (k < groups.length && groups[k]._id === deletedGroups.newContentGroup._id)
+                    else if (newGroups[k]._id === deletedGroups.newContentGroup._id)
                     {
                         newGroups[k] = deletedGroups.newContentGroup;
                     }
                     for (var j = 0; j < deletedGroups.otherGroups.length; j++)
                     {
-                        if (j < deletedGroups.otherGroups.length && deletedGroups.otherGroups[j]._id === groups[k]._id)
+                        if (newGroups[k]._id === deletedGroups.otherGroups[j]._id)
                         {
                             newGroups.splice (k, 1);
                             goBack = true;
@@ -86,10 +86,9 @@ function GroupExplorer (props)
                     }
                     for (var i = 0; i < deletedGroups.otherLocks.length; i++)
                     {
-                        if (k < groups.length && i < deletedGroups.otherLocks.length && deletedGroups.otherLocks[i]._id === groups[k]._id)
+                        if (newGroups[k]._id === deletedGroups.otherLocks[i]._id)
                         {
                             newGroups.splice (k, 1);
-                            setUpdate (update+1);
                             goBack = true;
                         }
                     }
@@ -102,18 +101,18 @@ function GroupExplorer (props)
                 for (var h = 0; h < expandedGroups.length; h++)
                 {
                     var goBack = false;
-                    if (h < expandedGroups.length && expandedGroups[h]._id === deletedGroups.group._id)
+                    if (newExpandedGroups[h]._id === deletedGroups.group._id)
                     {
                         newExpandedGroups.splice (h, 1);
                         goBack = true;
                     }
-                    else if (h < expandedGroups.length && expandedGroups[h]._id === deletedGroups.newContentGroup._id)
+                    else if (newExpandedGroups[h]._id === deletedGroups.newContentGroup._id)
                     {
                         newExpandedGroups[h] = deletedGroups.newContentGroup;
                     }
                     for (var f = 0; f < deletedGroups.otherGroups.length; f++)
                     {
-                        if (h < expandedGroups.length && f < deletedGroups.otherGroups.length && deletedGroups.otherGroups[f]._id === expandedGroups[h]._id)
+                        if (newExpandedGroups[h]._id === deletedGroups.otherGroups[f]._i)
                         {
                             newExpandedGroups.splice (h, 1);
                             goBack = true;
@@ -211,17 +210,16 @@ function GroupExplorer (props)
             if (deletedLock.hasOwnProperty ("lock"))
             {
                 var newGroups = groups;
-                for (var k = 0; k < groups.length; k++)
+                for (var k = 0; k < newGroups.length; k++)
                 {
-                    if (groups[k]._id === deletedLock.lock._id)
+                    if (newGroups[k]._id === deletedLock.lock._id)
                     {
                         newGroups.splice (k, 1);
                         k--;
                     }
-                    else if (groups[k]._id === deletedLock.newContentGroup._id)
+                    else if (newGroups[k]._id === deletedLock.newContentGroup._id)
                     {
                         newGroups[k] = deletedLock.newContentGroup;
-                        k--;
                     }
                 }
                 setGroups (newGroups);
@@ -373,6 +371,7 @@ function GroupExplorer (props)
             }
         );
         setGroups (tempGroups);
+        setUpdate (update+1);
     }
 
     function handleGroupClick (group)

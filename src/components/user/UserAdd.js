@@ -4,6 +4,7 @@ import api from "../../services/api";
 import currentCentralContext from "../context/currentCentralContext";
 import allRolesContext from "../context/allRolesContext";
 import addedUserContext from "../context/addedUserContext";
+import messageContext from "../context/messageContext";
 
 import "../../css/user/userAdd.css";
 
@@ -12,20 +13,48 @@ function UserAdd ()
     const {currentCentral, setCurrentCentral} = useContext (currentCentralContext);
     const {allRoles, setAllRoles} = useContext (allRolesContext);
     const {addedUser, setAddedUser} = useContext (addedUserContext);
+    const {message, setMessage} = useContext (messageContext);
     const [name, setName] = useState ("");
     const [email, setEmail] = useState ("");
     const [MACs, setMACs] = useState ([]);
     const [roles, setRoles] = useState ([]);
+    const [validName, setValidName] = useState (true);
+    const [validEmail, setValidEmail] = useState (true);
+
+    function checkName (name)
+    {
+        if (name.length > 0)
+        {
+            setValidName (true);
+            return true;
+        }
+        setValidName (false);
+        return false;
+    }
+
+    function checkEmail (email)
+    {
+        const regularExpression = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (regularExpression.test (String (email).toLowerCase ()))
+        {
+            setValidEmail (true);
+            return true;
+        }
+        setValidEmail (false);
+        return false;
+    }
 
     function handleChangeName (e)
     {
         const value = e.target.value;
+        checkName (value);
         setName (value);
     }
 
     function handleChangeEmail (e)
     {
         const value = e.target.value;
+        checkEmail (value);
         setEmail (value);
     }
 
@@ -70,7 +99,7 @@ function UserAdd ()
     {
         if (allRoles.length === 0)
         {
-            window.alert ("Você não possui papéis criados.");
+            setMessage ("Você não possui papéis criados.");
         }
         else
         {
@@ -91,27 +120,32 @@ function UserAdd ()
     async function handleSubmit (e)
     {
         e.preventDefault ();
-        const owner = currentCentral._id;
-        const response = await api.post
-        (
-            "/userstore",
-            {
-                name,
-                email,
-                MACs,
-                roles,
-                owner
-            }
-        );
-        if (response.data === "")
+        if (checkName (name) && checkEmail (email))
         {
-            window.alert ("Já existe um usuário com esse nome.");
+            const response = await api.post
+            (
+                "/userstore",
+                {
+                    name,
+                    email,
+                    MACs,
+                    roles,
+                    owner: currentCentral._id
+                }
+            );
+            if (response.data === "")
+            {
+                setMessage (`Já existe um usuário com o nome ${name}.`);
+            }
+            else
+            {
+                setAddedUser (response.data);
+                setMessage (`O usuário ${name} foi criado.`);
+            }
         }
         else
         {
-            window.alert (`O usuário ${name} foi criado.`);
-            setAddedUser (response.data);
-            document.getElementById ("userAdd").reset();
+            setMessage ("Um ou mais campos são inválidos.");
         }
     }
 
@@ -125,9 +159,8 @@ function UserAdd ()
                         placeholder = "Nome"
                         className = "nameInput"
                         value = {name}
-                        onChange = {(e) => handleChangeName (e)}
-                        pattern = "[A-Za-z0-9_]{3,}"
-                        required
+                        style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeName (e)}}
                     />
                 </div>
                 <div className = "emailInputGroup">
@@ -137,9 +170,8 @@ function UserAdd ()
                         placeholder = "E-mail"
                         className = "emailInput"
                         value = {email}
-                        onChange = {(e) => handleChangeEmail (e)}
-                        type = "email"
-                        required
+                        style = {{borderColor: validEmail ? "#cccccc" : "#cc5151"}}
+                        onChange = {(e) => {handleChangeEmail (e)}}
                    />
                 </div>
                 {
@@ -155,12 +187,12 @@ function UserAdd ()
                                         className = "MACInput"
                                         value = {MAC}
                                         placeholder = "MAC"
-                                        onChange = {(e) => handleChangeMAC (index, e)}
+                                        onChange = {(e) => {handleChangeMAC (index, e)}}
                                     />
                                     <button
                                     className = "buttonMACRemove"
                                     type = "button"
-                                    onClick = {() => handleRemoveMAC (index)}
+                                    onClick = {() => {handleRemoveMAC (index)}}
                                     >
                                         X
                                     </button>
@@ -180,7 +212,7 @@ function UserAdd ()
                                     <select
                                     className = "roleSelect"
                                     value = {role.name}
-                                    onChange = {(e) => handleChangeRole (index, e)}
+                                    onChange = {(e) => {handleChangeRole (index, e)}}
                                     >
                                         {
                                             allRoles.map
@@ -203,7 +235,7 @@ function UserAdd ()
                                     <button
                                     className = "buttonRoleRemove"
                                     type = "button"
-                                    onClick = {() => handleRemoveRole (index)}
+                                    onClick = {() => {handleRemoveRole (index)}}
                                     >
                                         X
                                     </button>
@@ -216,14 +248,14 @@ function UserAdd ()
                     <button
                     className = "buttonMACAdd"
                     type = "button"
-                    onClick = {() => handleAddMAC ()}
+                    onClick = {() => {handleAddMAC ()}}
                     >
                         Adicionar MAC
                     </button>
                     <button
                     className = "buttonRoleAdd"
                     type = "button"
-                    onClick = {() => handleAddRole ()}
+                    onClick = {() => {handleAddRole ()}}
                     >
                         Adicionar papel
                     </button>
@@ -231,7 +263,7 @@ function UserAdd ()
                 <button
                 className = "buttonSubmit"
                 type = "submit"
-                onClick = {(e) => handleSubmit (e)}
+                onClick = {(e) => {handleSubmit (e)}}
                 >
                     Criar usuário
                 </button>

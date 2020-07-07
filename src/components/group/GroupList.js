@@ -71,25 +71,23 @@ function GroupList ({match})
             if (deletedGroups.hasOwnProperty ("group"))
             {
                 var newGroups = groups;
-                for (var k = 0; k < groups.length; k++)
+                for (var k = 0; k < newGroups.length; k++)
                 {
                     var goBack = false;
-                    if (k < groups.length && groups[k]._id === deletedGroups.group._id)
+                    if (newGroups[k]._id === deletedGroups.group._id)
                     {
                         newGroups.splice (k, 1);
-                        setUpdate (update+1);
                         goBack = true;
                     }
-                    else if (k < groups.length && groups[k]._id === deletedGroups.newContentGroup._id)
+                    else if (newGroups[k]._id === deletedGroups.newContentGroup._id)
                     {
                         newGroups[k] = deletedGroups.newContentGroup;
                     }
                     for (var j = 0; j < deletedGroups.otherGroups.length; j++)
                     {
-                        if (k < groups.length && j < deletedGroups.otherGroups.length && deletedGroups.otherGroups[j]._id === groups[k]._id)
+                        if (newGroups[k]._id === deletedGroups.otherGroups[j]._id)
                         {
                             newGroups.splice (k, 1);
-                            setUpdate (update+1);
                             goBack = true;
                         }
                     }
@@ -97,10 +95,9 @@ function GroupList ({match})
                     {
                         console.log (groups.length);
                         console.log (k);
-                        if (k < groups.length && i < deletedGroups.otherLocks.length && deletedGroups.otherLocks[i]._id === groups[k]._id)
+                        if (newGroups[k]._id === deletedGroups.otherLocks[i]._id)
                         {
                             newGroups.splice (k, 1);
-                            setUpdate (update+1);
                             goBack = true;
                         }
                     }
@@ -110,6 +107,7 @@ function GroupList ({match})
                     }
                 }
                 setGroups (newGroups);
+                setUpdate (update+1);
             }
         },
         [deletedGroups]
@@ -161,20 +159,20 @@ function GroupList ({match})
             if (deletedLock.hasOwnProperty ("lock"))
             {
                 var newGroups = groups;
-                for (var k = 0; k < groups.length; k++)
+                for (var k = 0; k < newGroups.length; k++)
                 {
-                    if (k < groups.length && groups[k]._id === deletedLock.lock._id)
+                    if (k < newGroups.length && newGroups[k]._id === deletedLock.lock._id)
                     {
                         newGroups.splice (k, 1);
-                        setUpdate (update+1);
                         k--;
                     }
-                    else if (groups[k]._id === deletedLock.newContentGroup._id)
+                    else if (newGroups[k]._id === deletedLock.newContentGroup._id)
                     {
                         newGroups[k] = deletedLock.newContentGroup;
                     }
                 }
                 setGroups (newGroups);
+                setUpdate (update+1);
             }
         },
         [deletedLock]
