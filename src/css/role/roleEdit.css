@@ -49,7 +49,9 @@
     height: 30px;
     width: 10px;
     border: solid 1px #cccccc;
-    cursor: pointer
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
 }
 
 .roleEditArea label
@@ -161,12 +163,6 @@
 {
     color: #ffffff;
     background-color: #cccccc;
-}
-
-.roleEditArea .checkbox
-{
-    position: relative;
-    display: inline-block;
 }
 
 .roleEditArea .checkbox .tooltiptext

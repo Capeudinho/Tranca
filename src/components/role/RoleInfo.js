@@ -44,6 +44,7 @@ function RoleInfo ({match})
                 {
                     setRole (response.data);
                 }
+                setConfirm (false);
             }
             runEffect();
             return (() => {mounted = false;});

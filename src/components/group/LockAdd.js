@@ -73,6 +73,7 @@ function LockAdd ({match})
                         form = "groupAdd"
                         placeholder = "Nome"
                         className = "nameInput"
+                        onChange = {(e) => {handleChangeName (e)}}
                         value = {name}
                         style = {{borderColor: validName ? "#cccccc" : "#cc5151"}}
                     />

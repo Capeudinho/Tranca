@@ -43,6 +43,7 @@ function GroupInfo ({match})
                 {
                     setGroup (response.data);
                 }
+                setConfirm (false);
             }
             runEffect();
             return (() => {mounted = false;});
@@ -125,9 +126,14 @@ function GroupInfo ({match})
             {redirect}
             <div className = "name">{group.name}</div>
             <div className = "type">{group.hasOwnProperty ("content") ? "Grupo" : "Tranca"}</div>
-            <Link to = {match.url.concat ("/edit")}>
-                <button className = "buttonEdit">Editar</button>
-            </Link>
+            <div className = "optionButtons">
+                <Link to = {match.url.concat ("/edit")}>
+                    <button className = "buttonEdit">Editar</button>
+                </Link>
+                <Link to = {match.url.concat ("/move")}>
+                    <button className = "buttonMove">Mover</button>
+                </Link>
+            </div>
             <button
             className = "buttonDelete"
             onClick =

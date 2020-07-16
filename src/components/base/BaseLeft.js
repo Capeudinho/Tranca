@@ -43,7 +43,7 @@ function BaseLeft ()
                 }
             );
         },
-        []
+        [currentCentral]
     );
 
     return (

@@ -6,6 +6,7 @@ import currentCentralContext from "../context/currentCentralContext";
 import groupPathContext from "../context/groupPathContext";
 import deletedGroupsContext from "../context/deletedGroupsContext";
 import updatedGroupContext from "../context/updatedGroupContext";
+import movedGroupContext from "../context/movedGroupContext";
 import addedGroupContext from "../context/addedGroupContext";
 import deletedLockContext from "../context/deletedLockContext";
 import updatedLockContext from "../context/updatedLockContext";
@@ -19,6 +20,7 @@ function GroupExplorer (props)
     const {groupPath, setGroupPath} = useContext (groupPathContext);
     const {deletedGroups, setDeletedGroups} = useContext (deletedGroupsContext);
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
+    const {movedGroup, setMovedGroup} = useContext (movedGroupContext);
     const {addedGroup, setAddedGroup} = useContext (addedGroupContext);
     const {deletedLock, setDeletedLock} = useContext (deletedLockContext);
     const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
@@ -55,7 +57,7 @@ function GroupExplorer (props)
             return (() => {mounted = false;});
         },
         []
-    )
+    );
 
     useEffect
     (
@@ -129,7 +131,7 @@ function GroupExplorer (props)
             }
         },
         [deletedGroups]
-    )
+    );
 
     useEffect
     (
@@ -153,7 +155,92 @@ function GroupExplorer (props)
             }
         },
         [updatedGroup]
-    )
+    );
+
+    useEffect
+    (
+        () =>
+        {
+            if (movedGroup.hasOwnProperty ("newItem"))
+            {
+                var newGroups = groups;
+                var newExpandedGroups = expandedGroups;
+                for (var k = 0; k < newGroups.length; k++)
+                {
+                    if (newGroups[k]._id === movedGroup.newItem._id)
+                    {
+                        newGroups.splice (k, 1);
+                        k--;
+                    }
+                    else if (newGroups[k]._id === movedGroup.newDest._id)
+                    {
+                        newGroups[k] = movedGroup.newDest;
+                    }
+                    else if (newGroups[k]._id === movedGroup.newContentGroup._id)
+                    {
+                        newGroups[k] = movedGroup.newContentGroup;
+                    }
+                    else
+                    {
+                        for (var j = 0; j < movedGroup.otherGroups.length; j++)
+                        {
+                            if (newGroups[k]._id === movedGroup.otherGroups[j]._id)
+                            {
+                                newGroups.splice (k, 1);
+                                k--;
+                            }
+                        }
+                        for (var i = 0; i < movedGroup.otherLocks.length; i++)
+                        {
+                            if (newGroups[k]._id === movedGroup.otherLocks[i]._id)
+                            {
+                                newGroups.splice (k, 1);
+                                k--;
+                            }
+                        }
+                    }
+                }
+                for (var a = 0; a < newExpandedGroups.length; a++)
+                {
+                    if (newExpandedGroups[a]._id === movedGroup.newItem._id)
+                    {
+                        newExpandedGroups.splice (a, 1);
+                        a--;
+                    }
+                    else if (newExpandedGroups[a]._id === movedGroup.newDest._id)
+                    {
+                        newExpandedGroups[a] = movedGroup.newDest;
+                        for (var b = 0; b < newGroups.length; b++)
+                        {
+                            if (newGroups[b]._id === movedGroup.newDest._id)
+                            {
+                                newGroups.splice (b+1, 0, movedGroup.newItem);
+                            }
+                        }
+                    }
+                    else if (newExpandedGroups[a]._id === movedGroup.newContentGroup._id)
+                    {
+                        newExpandedGroups[a] = movedGroup.newContentGroup;
+                    }
+                    else
+                    {
+                        for (var c = 0; c < movedGroup.otherGroups.length; c++)
+                        {
+                            if (newExpandedGroups[a]._id === movedGroup.otherGroups[c]._id)
+                            {
+                                newExpandedGroups.splice (a, 1);
+                                a--;
+                            }
+                        }
+                    }
+                }
+                setGroups (newGroups);
+                setExpandedGroups (newExpandedGroups);
+                setUpdate (update+1);
+            }
+        },
+        [movedGroup]
+    );
 
     useEffect
     (
@@ -201,7 +288,7 @@ function GroupExplorer (props)
             }
         },
         [addedGroup]
-    )
+    );
 
     useEffect
     (
@@ -227,7 +314,7 @@ function GroupExplorer (props)
             }
         },
         [deletedLock]
-    )
+    );
 
     useEffect
     (
@@ -251,7 +338,7 @@ function GroupExplorer (props)
             }
         },
         [updatedLock]
-    )
+    );
 
     useEffect
     (
@@ -299,7 +386,7 @@ function GroupExplorer (props)
             }
         },
         [addedLock]
-    )
+    );
 
     function newUrl (_id)
     {
@@ -439,7 +526,7 @@ function GroupExplorer (props)
                 )
             }
         </div>
-    )
+    );
 }
 
 export default GroupExplorer;

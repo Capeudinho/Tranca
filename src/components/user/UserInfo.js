@@ -24,7 +24,6 @@ function UserInfo ({match})
     const [confirm, setConfirm] = useState (false);
     const [update, setUpdate] = useState (0);
 
-
     useEffect
     (
         () =>
@@ -48,6 +47,7 @@ function UserInfo ({match})
                     setUser (response.data);
                     setUpdate (update+1);
                 }
+                setConfirm (false);
             }
             runEffect();
             return (() => {mounted = false;});

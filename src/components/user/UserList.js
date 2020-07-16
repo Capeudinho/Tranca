@@ -70,7 +70,7 @@ function UserList ()
                             setUsers (newUsers);
                         }
                     }
-                )
+                );
             }
         },
         [deletedUser]
@@ -93,7 +93,7 @@ function UserList ()
                             setUsers (newUsers);
                         }
                     }
-                )
+                );
             }
         },
         [updatedUser]
@@ -167,11 +167,12 @@ function UserList ()
             }
             <button
             className = "buttonLoadMore"
+            style = {{opacity: page === pageLimit ? 0.5 : 1}}
             onClick = {() => {if (page < pageLimit) {setPage (page+1)}}}>
                 Carregar mais
             </button>
         </div>
-    )
+    );
 }
 
 export default UserList;

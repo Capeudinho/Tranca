@@ -18,6 +18,7 @@ import GroupList from "./group/GroupList";
 import GroupInfo from "./group/GroupInfo";
 import GroupAdd from "./group/GroupAdd";
 import GroupEdit from "./group/GroupEdit";
+import GroupMove from "./group/GroupMove";
 import LockAdd from "./group/LockAdd";
 
 import UserAdd from "./user/UserAdd";
@@ -42,6 +43,7 @@ import updatedUserContext from "./context/updatedUserContext";
 import addedUserContext from "./context/addedUserContext";
 import deletedGroupsContext from "./context/deletedGroupsContext";
 import updatedGroupContext from "./context/updatedGroupContext";
+import movedGroupContext from "./context/movedGroupContext";
 import addedGroupContext from "./context/addedGroupContext";
 import deletedLockContext from "./context/deletedLockContext";
 import updatedLockContext from "./context/updatedLockContext";
@@ -61,6 +63,7 @@ function App ()
   const [addedUser, setAddedUser] = useState ([]);
   const [deletedGroups, setDeletedGroups] = useState ([]);
   const [updatedGroup, setUpdatedGroup] = useState ([]);
+  const [movedGroup, setMovedGroup] = useState ([])
   const [addedGroup, setAddedGroup] = useState ([]);
   const [deletedLock, setDeletedLock] = useState ([]);
   const [updatedLock, setUpdatedLock] = useState ([]);
@@ -93,12 +96,18 @@ function App ()
       }
     },
     [currentCentral]
-  )
+  );
 
   function Login ()
   {
     if (currentCentral.hasOwnProperty ("name"))
     {
+      return <div/>
+    }
+    else if (localStorage.getItem ("central") !== null)
+    {
+      const central = JSON.parse (localStorage.getItem ("central"));
+      setCurrentCentral (central);
       return <div/>
     }
     else
@@ -158,6 +167,7 @@ function App ()
                 <addedUserContext.Provider value = {{addedUser, setAddedUser}}>
                 <deletedGroupsContext.Provider value = {{deletedGroups, setDeletedGroups}}>
                 <updatedGroupContext.Provider value = {{updatedGroup, setUpdatedGroup}}>
+                <movedGroupContext.Provider value = {{movedGroup, setMovedGroup}}>
                 <addedGroupContext.Provider value = {{addedGroup, setAddedGroup}}>
                 <deletedLockContext.Provider value = {{deletedLock, setDeletedLock}}>
                 <updatedLockContext.Provider value = {{updatedLock, setUpdatedLock}}>
@@ -191,6 +201,7 @@ function App ()
 
                     <Route path = "/groups/:id/group/:id" component = {GroupInfo}/>
                     <Route path = "/groups/:id/group/:id/edit" component = {GroupEdit}/>
+                    <Route path = "/groups/:id/group/:id/move" component = {GroupMove}/>
                     <Route path = "/groups/:id/addgroup" component = {GroupAdd}/>
                     <Route path = "/groups/:id/addlock" component = {LockAdd}/>
 
@@ -217,6 +228,7 @@ function App ()
                 </updatedLockContext.Provider>
                 </deletedLockContext.Provider>
                 </addedGroupContext.Provider>
+                </movedGroupContext.Provider>
                 </updatedGroupContext.Provider>
                 </deletedGroupsContext.Provider>
                 </addedUserContext.Provider>

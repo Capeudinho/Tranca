@@ -35,7 +35,14 @@
     padding-left: 10px;
 }
 
-.groupInfoArea .buttonEdit
+.groupInfoArea .optionButtons
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+}
+
+.groupInfoArea .buttonEdit, .buttonMove
 {
     color: #cccccc;
     border-color: #cccccc;
@@ -49,7 +56,7 @@
     background-color: #cc5151;
 }
 
-.groupInfoArea .buttonEdit:hover
+.groupInfoArea .buttonEdit:hover, .buttonMove:hover
 {
     color: #ffffff;
     background-color: #cccccc;

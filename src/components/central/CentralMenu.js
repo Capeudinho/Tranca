@@ -21,7 +21,8 @@ function CentralMenu ()
         }
     );
     const [redirect, setRedirect] = useState (<div/>);
-    const [confirm, setConfirm] = useState (false);
+    const [deleteConfirm, setDeleteConfirm] = useState (false);
+    const [logoutConfirm, setLogoutConfirm] = useState (false);
     const [validName, setValidName] = useState (true);
     const [validEmail, setValidEmail] = useState (true);
     const [validPassword, setValidPassword] = useState (true);
@@ -32,7 +33,7 @@ function CentralMenu ()
         {
             setNewCentral (currentCentral);
         },
-        []
+        [currentCentral]
     );
 
     function checkName (name)
@@ -190,6 +191,43 @@ function CentralMenu ()
                         Mostrar
                     </button>
                 </div>
+                <div className = "buttonsSave">
+                    <button
+                    className = "buttonClear"
+                    type = "button"
+                    onClick =
+                    {
+                        () =>
+                        {
+                            localStorage.clear ();
+                            setMessage ("Os dados de sua conta foram removidos do navegador.");
+                        }
+                    }
+                    >
+                        Remover dados
+                    </button>
+                    <button
+                    className = "buttonLogout"
+                    type = "button"
+                    onClick =
+                    {
+                        () =>
+                        {
+                            if (logoutConfirm)
+                            {
+                                localStorage.clear ();
+                                setRedirect (<Redirect to = "/login"/>);
+                            }
+                            else
+                            {
+                                setLogoutConfirm (true);
+                            }
+                        }
+                    }
+                    >
+                        {logoutConfirm ? "Confirmar logout" : "Logout"}
+                    </button>
+                </div>
                 <div className = "buttonsMain">
                     <button
                     className = "buttonSubmit"
@@ -205,18 +243,18 @@ function CentralMenu ()
                     {
                         () =>
                         {
-                            if (confirm)
+                            if (deleteConfirm)
                             {
                                 handleDelete ();
                             }
                             else
                             {
-                                setConfirm (true);
+                                setDeleteConfirm (true);
                             }
                         }
                     }
                     >
-                        {confirm ? "Confirmar exclusão" : "Excluir"}
+                        {deleteConfirm ? "Confirmar exclusão" : "Excluir"}
                     </button>
                 </div>
             </form>

@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useContext} from "react";
 import api from "../../services/api";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 import groupPathContext from "../context/groupPathContext";
 import deletedGroupsContext from "../context/deletedGroupsContext";
 import updatedGroupContext from "../context/updatedGroupContext";
+import movedGroupContext from "../context/movedGroupContext";
 import addedGroupContext from "../context/addedGroupContext";
 import deletedLockContext from "../context/deletedLockContext";
 import updatedLockContext from "../context/updatedLockContext";
@@ -17,12 +18,14 @@ function GroupList ({match})
     const {groupPath, setGroupPath} = useContext (groupPathContext);
     const {deletedGroups, setDeletedGroups} = useContext (deletedGroupsContext);
     const {updatedGroup, setUpdatedGroup} = useContext (updatedGroupContext);
+    const {movedGroup, setMovedGroup} = useContext (movedGroupContext);
     const {addedGroup, setAddedGroup} = useContext (addedGroupContext);
     const {deletedLock, setDeletedLock} = useContext (deletedLockContext);
     const {updatedLock, setUpdatedLock} = useContext (updatedLockContext);
     const {addedLock, setAddedLock} = useContext (addedLockContext);
     const [groups, setGroups] = useState ([]);
     const [update, setUpdate] = useState (0);
+    const [redirect, setRedirect] = useState (<div/>);
 
     useEffect
     (
@@ -62,7 +65,7 @@ function GroupList ({match})
             return (() => {mounted = false;});
         },
         [match.url]
-    )
+    );
 
     useEffect
     (
@@ -93,8 +96,6 @@ function GroupList ({match})
                     }
                     for (var i = 0; i < deletedGroups.otherLocks.length; i++)
                     {
-                        console.log (groups.length);
-                        console.log (k);
                         if (newGroups[k]._id === deletedGroups.otherLocks[i]._id)
                         {
                             newGroups.splice (k, 1);
@@ -111,7 +112,7 @@ function GroupList ({match})
             }
         },
         [deletedGroups]
-    )
+    );
 
     useEffect
     (
@@ -135,7 +136,25 @@ function GroupList ({match})
             }
         },
         [updatedGroup]
-    )
+    );
+
+    useEffect
+    (
+        () =>
+        {
+            if (movedGroup.hasOwnProperty ("newItem") && movedGroup.newDest._id === match.params.id)
+            {
+                var tempGroups = groups;
+                tempGroups.push (movedGroup.newItem);
+                setGroups (tempGroups);
+            }
+            else if (movedGroup.hasOwnProperty ("newItem"))
+            {
+                setRedirect (<Redirect to = {`/groups/${movedGroup.newDest._id}`}/>);
+            }
+        },
+        [movedGroup]
+    );
 
     useEffect
     (
@@ -150,7 +169,7 @@ function GroupList ({match})
             }
         },
         [addedGroup]
-    )
+    );
 
     useEffect
     (
@@ -176,7 +195,7 @@ function GroupList ({match})
             }
         },
         [deletedLock]
-    )
+    );
 
     useEffect
     (
@@ -200,7 +219,7 @@ function GroupList ({match})
             }
         },
         [updatedLock]
-    )
+    );
 
     useEffect
     (
@@ -215,7 +234,7 @@ function GroupList ({match})
             }
         },
         [addedLock]
-    )
+    );
 
     return (
         <div className = "groupListArea">
@@ -270,8 +289,9 @@ function GroupList ({match})
                     }
                 )
             }
+            {redirect}
         </div>
-    )
+    );
 }
 
 export default GroupList;

@@ -166,6 +166,7 @@ function RoleList ()
             }
             <button
             className = "buttonLoadMore"
+            style = {{opacity: page === pageLimit ? 0.5 : 1}}
             onClick = {() => {if (page < pageLimit) {setPage (page+1)}}}>
                 Carregar mais
             </button>

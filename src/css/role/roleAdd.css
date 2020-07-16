@@ -49,7 +49,9 @@
     height: 30px;
     width: 10px;
     border: solid 1px #cccccc;
-    cursor: pointer
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
 }
 
 .roleAddArea .singleDay
@@ -152,12 +154,6 @@
 {
     color: #ffffff;
     background-color: #cccccc;
-}
-
-.roleAddArea .checkbox
-{
-    position: relative;
-    display: inline-block;
 }
 
 .roleAddArea .checkbox .tooltiptext

@@ -70,16 +70,22 @@
     border-width: 2px;
     border-radius: 5px;
     background-color: #ffffff;
+    border-color: #cccccc;
+    color: #cccccc;
     cursor: pointer;
     text-align: left;
     padding-left: 10px;
 }
 
+.centralMenuArea button:hover
+{
+    color: #ffffff;
+    background-color: #cccccc;
+}
+
 .centralMenuArea .buttonShow
 {
     padding-right: 10px;
-    border-color: #cccccc;
-    color: #cccccc;
 }
 
 .centralMenuArea .buttonSubmit
@@ -94,12 +100,6 @@
     border-color: #cc5151;
 }
 
-.centralMenuArea .buttonShow:hover
-{
-    color: #ffffff;
-    background-color: #cccccc;
-}
-
 .centralMenuArea .buttonSubmit:hover
 {
     color: #ffffff;
@@ -110,4 +110,12 @@
 {
     color: #ffffff;
     background-color: #cc5151;
+}
+
+.centralMenuArea .buttonsSave
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+    padding-bottom: 10px;
 }

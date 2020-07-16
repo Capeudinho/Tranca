@@ -22,6 +22,8 @@ function CentralLogin ({match})
     const [validName, setValidName] = useState (true);
     const [validEmail, setValidEmail] = useState (true);
     const [validPassword, setValidPassword] = useState (true);
+    const [loginSave, setLoginSave] = useState (false);
+    const [registerSave, setRegisterSave] = useState (false);
 
     function checkName (name)
     {
@@ -118,6 +120,10 @@ function CentralLogin ({match})
                         owner: response.data._id
                     }
                 );
+                if (registerSave)
+                {
+                    localStorage.setItem ("central", JSON.stringify (response.data));
+                }
                 setCurrentCentral (response.data);
                 setRedirect (<Redirect to = "/"/>);
             }
@@ -148,6 +154,10 @@ function CentralLogin ({match})
         }
         else
         {
+            if (loginSave)
+            {
+                localStorage.setItem ("central", JSON.stringify (response.data));
+            }
             setCurrentCentral (response.data);
             setRedirect (<Redirect to = "/"/>);
         }
@@ -201,6 +211,14 @@ function CentralLogin ({match})
                                 Mostrar
                             </button>
                         </div>
+                        <div className = "save">
+                            <label className = "labelSave">Guardar dados</label>
+                            <div
+                            className = "checkbox"
+                            style = {{backgroundColor: registerSave ? "#cccccc" : "#ffffff"}}
+                            onClick = {() => {setRegisterSave (!registerSave)}}
+                            />
+                        </div>
                         <Link to = {match.url.replace ("/login", "")}>
                             <button
                             className = "buttonRegister"
@@ -247,6 +265,14 @@ function CentralLogin ({match})
                                 Mostrar
                             </button>
                         </div>
+                        <div className = "save">
+                            <label className = "labelSave">Guardar dados</label>
+                            <div
+                            className = "checkbox"
+                            style = {{backgroundColor: loginSave ? "#cccccc" : "#ffffff"}}
+                            onClick = {() => {setLoginSave (!loginSave)}}
+                            />
+                        </div>
                         <div className = "semispace"></div>
                         <Link to = {match.url.replace ("/login", "")}>
                             <button
@@ -263,7 +289,7 @@ function CentralLogin ({match})
             </div>
             <div className = "space"/>
         </div>
-    )
+    );
 }
 
 export default CentralLogin;
