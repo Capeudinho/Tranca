@@ -22,6 +22,7 @@ routes.get ("/groupcontentindex", GroupController.contentindex);
 routes.post ("/groupstore", GroupController.store);
 routes.put ("/groupidupdate", GroupController.idupdate);
 routes.put ("/groupidupdatesimp", GroupController.idupdatesimp);
+routes.put ("/groupidupdatemove", GroupController.idupdatemove);
 routes.delete ("/groupiddestroy", GroupController.iddestroy);
 
 routes.get ("/locklist", LockController.list);
@@ -41,6 +42,7 @@ routes.delete ("/roleiddestroy", RoleController.iddestroy);
 routes.get ("/centrallist", CentralController.list);
 routes.get ("/centralidindex", CentralController.idindex);
 routes.get ("/centralloginindex", CentralController.loginindex);
+routes.get ("/centralemailindex", CentralController.emailindex);
 routes.post ("/centralstore", CentralController.store);
 routes.put ("/centralidupdate", CentralController.idupdate);
 routes.delete ("/centraliddestroy", CentralController.iddestroy);

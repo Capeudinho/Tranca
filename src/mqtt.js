@@ -21,37 +21,23 @@ client.on
             {
                 if (error !== true)
                 {
-                    //client.publish
-                    //(
-                    //    "checkAccess",
-                    //    JSON.stringify
-                    //    (
-                    //        {
-                    //            _id: "5ef2c238597ed2c8da19f9fc",
-                    //            MAC: "123"
-                    //        }
-                    //    )
-                    //);
-
-                    //setTimeout 
+                    //setTimeout
                     //(
                     //    () =>
                     //    {
-                    //        io.emit
+                    //        client.publish
                     //        (
-                    //            "log",
-                    //            {
-                    //                user: "UserTwo",
-                    //                lock: "LockTwoTwo",
-                    //                day: 6,
-                    //                time: 120,
-                    //                type: "warning",
-                    //                owner: "5ec7c93118badec7e95d061c",
-                    //            }
+                    //            "checkAccess",
+                    //            JSON.stringify
+                    //            (
+                    //                {
+                    //                    _id: "5ef2c238597ed2c8da19f9fc",
+                    //                    MAC: "123"
+                    //                }
+                    //            )
                     //        );
-                    //        console.log ("Emitiu");
                     //    },
-                    //    20000
+                    //    5000
                     //);
                 }
             }
@@ -124,7 +110,7 @@ client.on
                 }
                 if (usedTimes.length > 0)
                 {
-                    console.log ("Permitir");
+                    console.log ("True");
                     client.publish
                     (
                         "respondAccess",
@@ -147,7 +133,7 @@ client.on
                 }
                 else
                 {
-                    console.log ("Bloquear");
+                    console.log ("False");
                     client.publish
                     (
                         "respondAccess",
@@ -157,7 +143,7 @@ client.on
             }
             else
             {
-                console.log ("Stop");
+                console.log ("False");
                 client.publish
                 (
                     "respondAccess",

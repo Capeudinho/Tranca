@@ -26,6 +26,13 @@ module.exports =
         return response.json (central);
     },
 
+    async emailindex (request, response)
+    {
+        const {email} = request.query;
+        const central = await Central.findOne ({email});
+        return response.json (central);
+    },
+
     async store (request, response)
     {
         const {name = "", email = "", password = ""} = request.body;

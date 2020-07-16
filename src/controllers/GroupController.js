@@ -104,6 +104,83 @@ module.exports =
         }
         return response.json (newGroup);
     },
+    
+    async idupdatemove (request, response)
+    {
+        const {item_id, dest_id} = request.body;
+        var dest = await Group.findById (dest_id);
+        var item = await Group.findById (item_id);
+        if (dest.holder.includes (item_id) || dest_id === item_id)
+        {
+            return response.json (null);
+        }
+        else
+        {
+            var oldDest = JSON.parse (JSON.stringify (dest));
+            if (item === null)
+            {
+                item = await Lock.findById (item_id);
+                var newHolder = dest.holder;
+                newHolder.push (dest_id);
+                var newItem = await Lock.findByIdAndUpdate (item_id, {holder: newHolder}, {new: true});
+            }
+            else
+            {
+                var newHolder = dest.holder;
+                newHolder.push (dest_id);
+                var newItem = await Group.findByIdAndUpdate (item_id, {holder: newHolder}, {new: true});
+            }
+            var newContentGroup = await Group.findOneAndUpdate ({content: item_id}, {$pullAll: {content: [item_id]}}, {new: true});
+            var newContent = dest.content;
+            newContent.push (item_id);
+            const newDest = await Group.findByIdAndUpdate (dest_id, {content: newContent}, {new: true});
+            var otherGroups = await Group.find ({holder: item_id});
+            var otherLocks = await Lock.find ({holder: item_id});
+            otherGroups.map
+            (
+                async (group, index) =>
+                {
+                    group.holder = group.holder.filter
+                    (
+                        (singleHolder) =>
+                        {
+                            if (item.holder.includes (singleHolder))
+                            {
+                                return false;
+                            }
+                            return true;
+                        }
+                    );
+                    group.holder.unshift (dest_id);
+                    const newHolder = oldDest.holder.concat (group.holder);
+                    const newGroup = await Group.findByIdAndUpdate (group._id, {holder: newHolder}, {new: true});
+                    otherGroups[index] = newGroup;
+                }
+            );
+            otherLocks.map
+            (
+                async (lock, index) =>
+                {
+                    lock.holder = lock.holder.filter
+                    (
+                        (singleHolder) =>
+                        {
+                            if (item.holder.includes (singleHolder))
+                            {
+                                return false;
+                            }
+                            return true;
+                        }
+                    );
+                    lock.holder.unshift (dest_id);
+                    const newHolder = dest.holder.concat (lock.holder);
+                    const newLock = await Lock.findByIdAndUpdate (lock._id, {holder: newHolder}, {new: true});
+                    otherLocks[index] = newLock;
+                }
+            );
+            return response.json ({newItem, newDest, newContentGroup, otherGroups, otherLocks});
+        }
+    },
 
     async iddestroy (request, response)
     {
@@ -111,7 +188,7 @@ module.exports =
         const group = await Group.findByIdAndDelete (_id);
         const otherGroups = await Group.find ({holder: {$in: [_id]}});
         const otherLocks = await Lock.find ({holder: {$in: [_id]}});
-        var newContentGroup = await Group.findOneAndUpdate ({content: {$in: [_id]}}, {$pullAll: {content: [_id]}}, {new: true});
+        var newContentGroup = await Group.findOneAndUpdate ({content: _id}, {$pullAll: {content: [_id]}}, {new: true});
         await Group.deleteMany ({holder: {$in: [_id]}});
         await Lock.deleteMany ({holder: {$in: [_id]}});
         updateMonitors (group.roles);
